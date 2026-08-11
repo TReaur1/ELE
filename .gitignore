@@ -1,0 +1,17 @@
+# AI 记忆与临时
+.ai-memory/
+*.log
+
+# 节点与依赖
+node_modules/
+dist/
+build/
+
+# 系统
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 工程临时
+*.bak
+~$*

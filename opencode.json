@@ -1,0 +1,37 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "duckduckgo-search": {
+      "type": "local",
+      "command": ["npx", "-y", "duckduckgo-websearch"],
+      "enabled": false
+    },
+    "sequential_thinking": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "cloud_brain": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-memory"],
+      "environment": {
+        "MEMORY_FILE_PATH": "C:\\Users\\kaanh\\.mcp\\memory\\memory.jsonl"
+      },
+      "enabled": true
+    },
+    "note": {
+      "type": "local",
+      "command": ["npx", "-y", "mcp-obsidian", "C:\\Users\\kaanh\\Documents\\Notes"],
+      "enabled": true
+    },
+    "sheetsdata": {
+      "type": "remote",
+      "url": "https://mcp.sheetsdata.com/mcp",
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:SHEETSDATA_API_KEY}"
+      },
+      "enabled": true
+    }
+  }
+}
