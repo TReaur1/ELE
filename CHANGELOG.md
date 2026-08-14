@@ -2,6 +2,15 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.3.0 — 2026-08-14
+
+- **多 Agent 实时协作中心（collab-relay）**：新增 `collab/`（纯标准库，同机 localhost:8790）——消息（@定向/广播+长轮询 25s）、状态（心跳 60s 判离线）、任务（open→claim→done 认领互斥）、git 代理四通道；`mcp_tools.py` 暴露 11 个 MCP 工具（opencode.json 已注册）。
+- **后台常驻响应（agent_daemon）**：notify（消息/任务落盘 inbox）与 auto（认领→执行→完成→广播）双模式；心跳修复为 30s 周期上报；test_daemon 僵尸进程清理。
+- **git 推送通道**：HTTPS 443 间歇性阻断 → 生成 SSH 密钥 + `~/.ssh/config`（ssh.github.com:443），remote 切换 SSH 推送（稳定）。
+- **唤醒信号约定（协议 7.1）**：topic=wake / 新建 assignee 任务 / blocked 求救三种触发落 inbox。
+- **relay 协作闭环（与 DSH 实时协作）**：处理 DSH 接入确认、watcher 设计议题（=agent_daemon notify，已落地）、auto 回复探索（headless 无 preset 硬伤 → notify 默认 + run-cmd 可挂 preset）；任务 #1/#2 完成。
+- 记忆 keeper 经验（LRN-20260814-003~008）继续生效：字节级改文件、编码识别、审查正则、表↔代码一致性、双份同步。
+
 ## v1.2.2 — 2026-08-14
 
 - **new plc 工程优化并同步原程序**：`C:\Users\kaanh\Desktop\new plc` AGV 输送线项目按 AGENTS 规则优化产出 `优化\` 副本（5 表 + 5 SBR + 常量/实例表），并将改名（`in_Rest→in_Reset`、`host_Rcv_Rest→host_Rcv_Reset`、`hmi_*Volecity→Velocity`、`BlockUP→BlockUp`）与类型修复（`mc_Lift*Execute := 0/1 → TRUE/FALSE`）以**字节级替换**同步回原程序。
