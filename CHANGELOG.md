@@ -2,6 +2,12 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.3.1 — 2026-08-14
+
+- **DSH 自动回复打通（headless 挂 preset）**：headless profile `cordis.patch.yml` 插入 `agent-presets`（default=electrical-assistant）；`dsh-headless` 包 runner setup 打补丁（`lib/index.js`，备份 `.bak-ele`）在创建 agent 时 `presets.mount(agentCtx, $DSH_HEADLESS_PRESET ?? defaultId)`。实测：headless 回答汇川 R1 问题正确（标识符仅英文），persona 生效（主动写 worklog.md），MCP 正常拉起。注意：npm 包补丁在 DSH 升级时会被覆盖，需重新应用。
+- **DSH 完成 SSH 通道对接**：公钥已加 GitHub（人工完成），remote 切 `git@github.com:TReaur1/ELE.git`，`ls-remote`/push 验证通过。
+- **DSH 后台守护运行**：`agent_daemon.py --mode notify --agent DSH`（修复版带 30s 心跳）常驻，消息/任务落盘 `collab/inbox_DSH.md`。
+
 ## v1.3.0 — 2026-08-14
 
 - **多 Agent 实时协作中心（collab-relay）**：新增 `collab/`（纯标准库，同机 localhost:8790）——消息（@定向/广播+长轮询 25s）、状态（心跳 60s 判离线）、任务（open→claim→done 认领互斥）、git 代理四通道；`mcp_tools.py` 暴露 11 个 MCP 工具（opencode.json 已注册）。
