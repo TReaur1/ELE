@@ -64,6 +64,8 @@ class Daemon:
         self.status_name = status_name or f'{agent}-daemon'
         self.last_seq = 0
         self.busy = False
+        self.last_beat = 0
+        self.beat_interval = 30   # 心跳间隔秒 (relay 60s 判离线, 留余量)
 
     def status(self, state, task='', note=''):
         try:
@@ -167,6 +169,10 @@ class Daemon:
         while True:
             self.handle_messages()
             self.handle_tasks()
+            # 持续心跳: 每 beat_interval 秒上报一次, 防止看板误判 offline
+            if time.time() - self.last_beat >= self.beat_interval:
+                self.status('busy' if self.busy else 'idle', note='daemon 运行中')
+                self.last_beat = time.time()
             time.sleep(self.interval)
 
 

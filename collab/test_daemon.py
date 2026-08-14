@@ -46,6 +46,8 @@ def main():
         if os.path.exists(f):
             os.remove(f)
     relay = spawn('relay_server.py', '--port', str(PORT), '--db', db)
+    daemon = None
+    daemon2 = None
     ok = True
 
     def check(name, cond, extra=''):
@@ -95,9 +97,14 @@ def main():
         print('结果:', 'ALL PASS' if ok else 'HAS FAIL')
         return 0 if ok else 1
     finally:
-        for p in (relay,):
+        for p in (relay, daemon, daemon2):
             try:
                 p.terminate()
+                p.wait(timeout=3)
+            except Exception:
+                pass
+            try:
+                p.kill()
             except Exception:
                 pass
 
