@@ -24,6 +24,8 @@ agent_daemon: collab-relay 后台常驻响应守护 (纯标准库)
 import argparse
 import json
 import os
+import shlex
+import shutil
 import subprocess
 import sys
 import time
@@ -53,7 +55,7 @@ def append_inbox(inbox, text):
 
 class Daemon:
     def __init__(self, relay, agent, mode, interval, inbox,
-                 run_cmd, task_timeout, status_name):
+                 run_cmd, task_timeout, status_name, workdir):
         self.relay = relay
         self.agent = agent
         self.mode = mode
@@ -62,6 +64,7 @@ class Daemon:
         self.run_cmd = run_cmd
         self.task_timeout = task_timeout
         self.status_name = status_name or f'{agent}-daemon'
+        self.workdir = workdir or REPO
         self.last_seq = 0
         self.busy = False
         self.last_beat = 0
@@ -138,21 +141,28 @@ class Daemon:
             self.status('idle')
 
     def _run(self, prompt):
-        """执行处理命令. run_cmd 支持 {} 占位符替换 prompt; 否则把 prompt 作为参数追加."""
+        """执行处理命令. run_cmd 含 {} 时用列表参数(保持 Unicode, 避免 cmd shell 中文乱码);
+        不含 {} 时整串经 shell 执行. Windows 超时后 taskkill /T 清理进程树."""
         try:
             if '{}' in self.run_cmd:
-                cmd = self.run_cmd.replace('{}', f'"{prompt}"')
-                proc = subprocess.run(cmd, shell=True, cwd=REPO, capture_output=True,
-                                      text=True, encoding='utf-8', errors='replace',
-                                      timeout=self.task_timeout)
+                parts = shlex.split(self.run_cmd.replace('{}', ' '), posix=False)
+                exe = shutil.which(parts[0]) or parts[0]
+                cmd = [exe] + parts[1:] + [prompt]
+                shell = False
             else:
-                proc = subprocess.run([self.run_cmd, prompt], cwd=REPO, capture_output=True,
-                                      text=True, encoding='utf-8', errors='replace',
-                                      timeout=self.task_timeout)
-            out = (proc.stdout or '') + (proc.stderr or '')
-            return proc.returncode == 0, out.strip()
+                cmd = self.run_cmd + f' "{prompt}"'
+                shell = True
+            proc = subprocess.Popen(
+                cmd, shell=shell, cwd=self.workdir, stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT, text=True, encoding='utf-8',
+                errors='replace')
+            out, _ = proc.communicate(timeout=self.task_timeout)
+            return proc.returncode == 0, (out or '').strip()
         except subprocess.TimeoutExpired:
-            return False, f'执行超时(>{self.task_timeout}s)'
+            if os.name == 'nt':
+                subprocess.run(['taskkill', '/F', '/T', '/PID', str(proc.pid)],
+                               capture_output=True)
+            return False, f'执行超时(>{self.task_timeout}s), 进程树已清理'
         except Exception as e:
             return False, str(e)
 
@@ -186,9 +196,10 @@ def main():
     ap.add_argument('--inbox', default='', help='notify 落盘文件')
     ap.add_argument('--run-cmd', default='opencode', help='auto 模式执行命令 (支持 {} 占位)')
     ap.add_argument('--task-timeout', type=int, default=600, help='任务执行超时秒')
+    ap.add_argument('--workdir', default='', help='任务执行工作目录 (默认仓库根)')
     args = ap.parse_args()
     Daemon(args.relay, args.agent, args.mode, args.interval, args.inbox,
-           args.run_cmd, args.task_timeout, args.status_name).run()
+           args.run_cmd, args.task_timeout, args.status_name, args.workdir).run()
 
 
 if __name__ == '__main__':

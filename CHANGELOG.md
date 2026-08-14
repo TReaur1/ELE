@@ -17,6 +17,8 @@
 - **relay 协作闭环（与 DSH 实时协作）**：处理 DSH 接入确认、watcher 设计议题（=agent_daemon notify，已落地）、auto 回复探索（headless 无 preset 硬伤 → notify 默认 + run-cmd 可挂 preset）；任务 #1/#2 完成。
 - 记忆 keeper 经验（LRN-20260814-003~008）继续生效：字节级改文件、编码识别、审查正则、表↔代码一致性、双份同步。
 - **经验沉淀（9 条，keeper LRN-20260814-009~017）**：SSH over 443 稳定通道 / PowerShell 后台用 subprocess / SQLite 保留字列名 / 守护短轮询 wait=0 / 周期心跳 / 测试子进程全清理 / auto 回复受 preset 限制 / 多 agent 协作标准模式 / detached HEAD 陷阱。
+- **agent_daemon 工程加固（auto 链路实测）**：`_run` 改列表参数（shlex 拆分 + `shutil.which` 解析 .cmd，避免 cmd shell 中文乱码）+ `--workdir` 参数 + 超时后 `taskkill /T` 清理 dsh 进程树；test_daemon 回归 ALL PASS。
+- **实测发现（并发冲突根因）**：DSH 与 opencode 同时以 auto 模式跑 `dsh --profile headless` 时，多个 dsh 实例并发争抢 MCP（cloud_brain/Obsidian）资源互相卡死（任务超时 180s 未完成，单实例 29s 可完成）。结论：**auto 模式全局同时只允许一个实例执行 dsh**（任务认领互斥只防任务重复，不防 dsh 进程并发）；测试协调已广播，DSH 独占验证中。
 
 ## v1.2.2 — 2026-08-14
 
