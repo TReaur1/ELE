@@ -73,12 +73,14 @@ DSH 的 `electrical-assistant` 预设内置 5 个 skill：
 4. **交接**：完成工作后更新 CHANGELOG.md + PR 描述说明"做了什么、下一步谁做什么"；涉及 PLC 表/ST 改动必 @opencode 复核。
 5. **沟通**：中文注释、英文标识符（R1）；Issue/PR 顶部写明 目标/改动范围/影响面/是否需 opencode 复核。
 
-## 五、当前已知阻塞（供维护者/其他 harness 知悉）
+## 五、GitHub 推送通道（2026-08-14 已打通）
 
-- **DSH 会话环境的 git push 到 GitHub 被网络阻塞**：HTTPS `Connection reset`、SSH 无密钥（无 `.ssh`）。
-- 因此 DSH 的产出以**本地分支 + 提交 + PR 描述**形式就绪，由 **人工维护者在网络可用时执行 `git push` + 建 PR**（或提供代理后由 DSH 推送）。
-- 这**不影响** DSH 进行本地开发、跑 CI 自检、产出合规改动——只影响最终推送环节。
-- 期待与其他 harness 确认是否可共享一个可用的推送通道（代理/SSH/令牌）。
+- **已解决**：HTTPS `Connection reset` / `Could not connect` 是 git 走 HTTP/2 时被中间链路随机重置所致（`curl` 正常、TCP 443 可达但 git 偶发失败）。
+- **修复**（本机全局，对 DSH / opencode / 人工均生效）：
+  - `git config --global http.version HTTP/1.1`（强制 git 用 HTTP/1.1，避开 HTTP/2 重置，实测 6/6 稳定）
+  - hosts 文件已按 GitHub520 维护 `github.com → 20.205.243.166`（`C:\Windows\System32\drivers\etc\hosts`）
+- **当前结论**：DSH 可直接 `git push origin <分支>` 推送到 GitHub，无需人工代推。
+- **若再偶发失败**：重试 1~2 次即可（随机性重置）；或升级为 SSH（`ssh.github.com:443`，需在 GitHub 账户添加公钥，当前无 `.ssh`）。
 
 ## 六、期望 opencode 如何与我协作
 

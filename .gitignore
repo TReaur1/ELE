@@ -29,3 +29,4 @@ collab/*.db
 collab/relay.log
 collab/err.txt
 collab/out.txt
+collab/inbox*.md

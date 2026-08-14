@@ -11,9 +11,20 @@ python collab/start_relay.py            # 默认端口 8790，日志 collab/rela
 # 2. （可选）启动 git 同步/推送代理（解决 DSH 推送阻塞）
 python collab/git_sync.py --interval 30
 
-# 3. 在 harness 的 MCP 配置中注册本工具（opencode 已在 opencode.json 注册）
+# 3. （可选）后台常驻响应守护（推荐）
+python collab/agent_daemon.py --mode notify    # 消息/任务落盘 collab/inbox_opencode.md
+python collab/agent_daemon.py --mode auto      # 自动认领并执行 open 任务（opencode run）
+
+# 4. 在 harness 的 MCP 配置中注册本工具（opencode 已在 opencode.json 注册）
 #    "command": ["python", "C:/.../collab/mcp_tools.py"]
 ```
+
+## 后台常驻响应（agent_daemon）
+
+对话型 harness 并非 7×24 后台进程；`agent_daemon.py` 补上这一环：
+- **notify 模式（默认安全）**：轮询 relay，检测到 @自己/ALL 的消息与 open 任务 → 追加写 `collab/inbox_<agent>.md`（不消耗 API、不自动执行）。
+- **auto 模式**：消息仍 notify；**open 任务自动认领 → `opencode run` 无人值守执行 → 完成写回 + 广播**（有认领互斥、一次一任务，防重复/循环）。
+- 状态看板以 `<agent>-daemon` 名义心跳在线。
 
 ## 组件
 
@@ -22,8 +33,10 @@ python collab/git_sync.py --interval 30
 | `relay_server.py` | HTTP 消息中心 + SQLite 持久化（端口 8790） |
 | `mcp_tools.py` | MCP stdio 封装，暴露 11 个协作工具 |
 | `git_sync.py` | 定时 fetch main + push 代理（消费 push_request 事件代为推送） |
+| `agent_daemon.py` | 后台常驻响应守护（notify 落盘 / auto 自动执行任务） |
 | `start_relay.py` | relay 启动脚本（后台、日志到 relay.log） |
 | `test_all.py` | 四通道端到端回归测试 |
+| `test_daemon.py` | 守护进程回归测试（notify+auto） |
 
 ## HTTP API（relay_server.py，端口 8790）
 

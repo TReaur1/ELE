@@ -211,6 +211,10 @@ class Handler(BaseHTTPRequestHandler):
         if p.path == '/msg':
             receiver = (q.get('to') or ['ALL'])[0]
             since = int((q.get('since') or ['0'])[0])
+            wait = (q.get('wait') or ['1'])[0]
+            if wait == '0':  # 短轮询: 立即返回 (供后台守护/脚本)
+                msgs = self.db.msgs_since(receiver, since)
+                return self._send(200, {'messages': msgs, 'latest': self.db.last_seq()})
             # 长轮询: 最多等待 LONGPOLL_TIMEOUT 秒
             deadline = time.time() + LONGPOLL_TIMEOUT
             while True:
