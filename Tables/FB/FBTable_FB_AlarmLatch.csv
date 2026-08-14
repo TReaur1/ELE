@@ -1,7 +1,0 @@
-序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
-1,IN,Fault,BOOL,,,,故障输入(电平),
-2,IN,Reset,BOOL,,,,复位信号(上升沿),
-3,OUT,Latched,BOOL,,,,锁存输出,
-4,OUT,NewFault,BOOL,,,,新故障脉冲(本周期上升沿),
-5,VAR,Reset_Trig,TRIG.R_TRIG,,,,复位上升沿检测,
-6,VAR,Fault_Trig,TRIG.R_TRIG,,,,故障上升沿检测,

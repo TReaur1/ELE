@@ -1,0 +1,7 @@
+序号,成员变量名,数据类型,注释,
+1,Done,BOOL,动作完成,
+2,Busy,BOOL,动作执行中,
+3,Active,BOOL,动作激活,
+4,CommandAborted,BOOL,命令中止,
+5,Error,BOOL,动作故障,
+6,ErrorID,DINT,动作故障码,

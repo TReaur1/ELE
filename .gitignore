@@ -15,3 +15,11 @@ Desktop.ini
 # 工程临时
 *.bak
 ~$*
+
+# 设备模型库生成物（可由 generate.py 再生成，不入库）
+设备模型库/output/
+
+# Python 缓存与数据库（可再生成）
+__pycache__/
+*.pyc
+设备模型库/db/*.db

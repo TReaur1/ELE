@@ -1,0 +1,19 @@
+(* ════════════════════════════════════════════════════════════════════
+   SBR_07 轴控制与输出 - {{ project.name }}
+   伺服FB / 步进FB / 辊筒FB + 最后写物理端子 + 急停安全切断
+   ════════════════════════════════════════════════════════════════════ *)
+{%- for s in actuators.servos %}
+
+(* {{ s.name_cn }} 伺服FB调用: {{ s.fb_instance }} *)
+{{ s.fb_instance }}(Axis := {{ s.axis_handle }}, PowerEnable := {{ s.cmd_struct }}.PowerEnable,
+    Absolute_Execute := {{ s.cmd_struct }}.Absolute_Execute,
+    Absolute_Position := {{ s.cmd_struct }}.Absolute_Position,
+    Absolute_MoveAbsoluteDone => {{ s.status_struct }}.MoveAbsolute.Done,
+    AxisStatusData => {{ s.status_struct }});
+{%- endfor %}
+{%- for sp in actuators.steppers %}
+
+(* {{ sp.name_cn }} 步进: {{ sp.fb_instance }} *)
+{{ sp.fb_instance }}(ManForward := {{ sp.fb_instance }}.ManForward, ManBackward := {{ sp.fb_instance }}.ManBackward,
+    Enable := con_RunOK, Stop := con_EstopPressed);
+{%- endfor %}

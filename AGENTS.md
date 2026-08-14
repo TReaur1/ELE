@@ -18,7 +18,11 @@
 ### R2 变量声明边界（强制）
 
 - **PROGRAM 中禁止声明标量 / 结构体变量**（中间变量、锁存 / 许可 / 边沿标志）：这些集中定义在 AutoShop CSV 变量表的 `con` 类，ST 引用的每个标量符号都必须能在变量表中找到，二者一一对应。
-- **FB 实例、定时器（TON/TP）、边沿检测（R_TRIG/F_TRIG）用 ST 语言声明，不进 CSV**：AutoShop 的 FB 实例无法经 CSV 变量表导入，必须在对应 PROGRAM 的局部 `VAR` 段以 ST 实例化（如 `Db_SafetyGate : FB_Debounce;`、`Comm_Timer : TON;`、`Rst_Trig : R_TRIG;`）。每个实例只在其所在 PROGRAM 内使用，扫描间状态自动保持。
+- **FB 实例、定时器（TON）、边沿检测（R_TRIG/F_TRIG）在 `inst_功能块实例.csv` 变量表声明，ST 中直接引用**：每行一个实例，`数据类型` 列填 FB 名（如 `FB_Debounce`）或 `TON` / `TRIG.R_TRIG`；TON/R_TRIG 实例需展开成员行（TON: IN/PT/Q/ET，PT/ET 为 DINT；R_TRIG: CLK/Q/M）。ST 各 PROGRAM 直接调用实例名，不再在局部 `VAR` 重复声明。每个实例只在其所在 PROGRAM 内使用，扫描间状态自动保持。
+- **批量 FB 调用采用「逐实例独立接口」模式**：
+  - FB 库（SBR_01）内每个 FB 用独立 `VAR_INPUT` / `VAR_OUTPUT` 接口（如 FB_Debounce: In/FilterTime→Out；FB_CmdHandshake: Cmd/Done/Timeout/Abort→Latched/Busy/Expired/Aborted），内部状态（TON/R_TRIG）留在 FB 内部。
+  - 同一 FB 的多份实例在 `inst_功能块实例.csv` 逐行声明并独立命名（如 `Db_Gripper_Err`、`Latch_Estop`、`Handshake_Axis1`、`TimedAct_GripFwd`），ST 逐实例调用 `实例名(参数 := 实参)`。
+  - 不使用「实参结构体 + 数组」模式（不建 ST_*Data 结构体、不用 VAR_IN_OUT 打包实参）。
 - 变量表分类（仅存全局标量 / 结构体 / 通讯 / HMI / IO）：
   - `io`    —— 物理输入输出（X / Y 映射变量）
   - `host`  —— 上位机通讯（host_Send_* / host_Rcv_*）
@@ -35,6 +39,17 @@
 - 结构体类型定义放在 **SBR_00（数据类型与常量）** 或 CSV 变量表的"类型"列；结构体实例按 R2 分类进入对应变量表（如 `con` / `AxisControl`）。
 - **结构体父变量不写入变量表**：含有多个成员的结构体实例（如 `AxisCmd[1..4]`、`AxisStatus[1..4]`、`Stepper_*`）以及汇川自带形式（如 `_sMCAXIS_INFO` 轴句柄、`AxisControlData/AxisStatusData`）在生成变量表时**不放入 CSV**，而是**写入对应 `.st` 文件并注释掉**，由人工创建（需 TYPE / DUT 定义或工程设备配置）。
 - 成员按功能分组、前缀一致，禁止把无关变量塞入同一结构体；结构体跨层传递时同步更新定义注释。
+
+### R3b 轴控实体模式（强制，EtherCAT 伺服专用）
+
+- **适用边界**：仅 EtherCAT 通讯伺服。脉冲步进仍用 `FB_StepperDrive + ST_Stepper`，不混用。
+- **四层结构**（每伺服一组）：命令实体 `M1_Cross_Cmd : AxisControlData`、状态实体 `M1_Cross_Status : AxisStatusData`（con 变量表，数据类型列填结构体名）；FB 实例 `AxisControl_M1 : FB_EtherCAT_Axis_ST`（inst 表）；轴句柄 `Axis_M1_Cross : _sMCAXIS_INFO`（工程设备配置）。
+- **结构体**：`AxisControlData`（命令：PowerEnable/Stop/Reset/Home/JogForward/JogBackward/Jogvelocity/JogAcceleration/JogDeceleration/Absolute_Execute/Absolute_Position/Absolute_Velocity/Absolute_Acceleration/Absolute_Deceleration）；`AxisStatusData`（状态：Power/Stop/Reset/Home/Jog/MoveAbsolute/MoveRelative/MoveVelocity/Halt 九子结构 + Position/Velocity/Torque/AxisState/Error/AxisErrorID/ReturnHomeDone 等标量）。
+- **FB 封装**：`FB_EtherCAT_Axis_ST` 为厂商轴控 FB 封装，内部直接调用 `MC_Power/MC_Reset/MC_Stop/MC_Home/MC_JOG/MC_MoveAbsolute/MC_ReadStatus/MC_ReadAxisError`，**MC_* 厂商函数不改写**；接口 = Axis(IN_OUT) + 14 命令输入 → AxisStatusData(OUT) + Absolute_MoveAbsoluteDone(OUT)。
+- **调用规范**：先给命令实体赋值，再调用实例（`:=` 传命令、`=>` 连输出）：
+  `AxisControl_M1(Axis := Axis_M1_Cross, PowerEnable := M1_Cross_Cmd.PowerEnable, ... , Absolute_MoveAbsoluteDone => M1_Cross_Status.MoveAbsolute.Done, AxisStatusData => M1_Cross_Status);`
+  状态经状态实体回读（`M1_Cross_Status.Error/AxisState/MoveAbsolute.Done/ReturnHomeDone/...`），不另建中间变量。
+- 命名注意：`AxisControlData` 成员为 `Jogvelocity`（小写 v）；回零完成用 `ReturnHomeDone`；状态机 `AxisState`（0断/1错误停/2停止中/3静止/4离散运动/5连续运动/6同步/7回零）；回零使能需 `AxisState=3` 静止。
 
 ### R4 汇川类型与结构体命名（强制）
 
@@ -137,7 +152,11 @@
 5. **常量化**：加减速系数、超时时间、滤波时间、速度档位、轴状态字一律用 `CONST`，禁止硬编码魔法数字。
 6. **边沿检测时序**：先读旧值 → 判断变化 → 后更新旧值，保证一个扫描周期内一致。
 7. **互锁原则**：正反转 `AND NOT` 互斥且定义优先级；模式互斥；三色灯用 ELSIF / 状态表互斥，禁止靠顺序叠 IF。
-8. **输入滤波**：急停不滤波（安全响应最快）；物料检测 / 限位 20ms（`FB_Debounce`）。**选点依据（AutoShop 手册，梯形图系 H3U 经验，ST 系 H5U 参考）**：仅 X0~X7 数字滤波可调（0~60ms，对应 D8020 / REFF），其余端口为硬件 RC 滤波约 10ms 不可调；高速计数 / 输入中断所用端口自动取最短滤波。急停 / 限位等安全与高速信号**优先分配 X0~X7**，否则即使软件不滤波也受约 10ms 硬件延迟限制。
+8. **输入滤波（汇川自带内置滤波优先）**：汇川 PLC 输入自带滤波——仅 X0~X7 数字滤波可调（0~60ms，对应 D8020 / REFF），其余端口为硬件 RC 滤波约 10ms 不可调，高速计数 / 输入中断所用端口自动取最短滤波。据此：
+   - **急停不滤波**：分配 X0~X7 并设最短滤波 / 直通，安全响应最快。
+   - **物料检测 / 限位等**：优先用**内置滤波**（分配 X0~X7 设数字滤波 0~60ms），而非软件滤波。
+   - **FB_Debounce 降级为可选额外消抖**：仅当内置滤波不足（需更长消抖、软件侧去抖、或 X0~X7 不够用）时才用 `FB_Debounce`，不再作为默认 20ms 必配。
+   - 安全与高速信号**优先分配 X0~X7**，否则即使软件不滤波也受约 10ms 硬件延迟限制。
 9. **通讯联锁**：Modbus TCP 断开 → `CommLost=TRUE` → `RunOK=0` → 自动停止，不依赖上位机主动停机。**心跳寄存器必须分离**：入向心跳（上位机→PLC，PLC 检测变化判在线）与出向心跳（PLC→上位机，PLC 自增示存活）不可复用同一寄存器，否则看门狗失效。
 10. **回零前置**：自动模式启动要求所有轴回零完成（用 `AxisStatusData.ReturnHomeDone` 或等价状态字判断）。
 11. **定位超时**：`MoveAbsolute` 必须配超时（`TIMEOUT_AXIS_MOVE`），超时置报警，防止卡死。

@@ -1,0 +1,23 @@
+name: PLC 规范审查门禁
+
+# 多智能体协作：PR 或 push 到主分支时自动审查，不合格拦截合并。
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+jobs:
+  plc-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 运行 PLC 规范审查
+        run: python scripts/ci_check.py

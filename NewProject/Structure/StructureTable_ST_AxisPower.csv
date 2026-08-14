@@ -1,0 +1,6 @@
+序号,成员变量名,数据类型,注释,
+1,Status,BOOL,轴使能状态,
+2,Busy,BOOL,使能执行中,
+3,Active,BOOL,使能激活,
+4,Error,BOOL,使能故障,
+5,ErrorID,DINT,使能故障码,

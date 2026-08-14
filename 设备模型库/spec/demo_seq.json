@@ -1,0 +1,62 @@
+{
+  "project": {
+    "name": "demo_seq",
+    "plc_model": "H5U",
+    "comm_proto": "ModbusTCP",
+    "archetype": "internal_seq",
+    "base_dir": "output/demo_seq"
+  },
+  "actuators": [
+    {"kind": "servo", "name_cn": "横移", "eng_name": "Cross", "idx": 1,
+     "cmd_struct": "M1_Cross_Cmd", "status_struct": "M1_Cross_Status",
+     "fb_instance": "AxisControl_M1_Cross", "axis_handle": "Axis_M1_Cross"},
+    {"kind": "servo", "name_cn": "提升", "eng_name": "Lift", "idx": 2,
+     "cmd_struct": "M2_Lift_Cmd", "status_struct": "M2_Lift_Status",
+     "fb_instance": "AxisControl_M2_Lift", "axis_handle": "Axis_M2_Lift"},
+    {"kind": "stepper", "name_cn": "夹爪", "eng_name": "Gripper", "idx": 1,
+     "fb_instance": "Stepper_Gripper"},
+    {"kind": "roller", "name_cn": "电辊筒", "eng_name": "Roller", "idx": 1,
+     "fb_instance": "FB_ControlCard"}
+  ],
+  "comm_write": [
+    {"var_name": "host_Send_Cross_PosNo", "name_cn": "横移位置号", "data_type": "INT", "d_addr": 0, "comment": "M1横移目标位置号(1~5)"},
+    {"var_name": "host_Send_Cross_Start", "name_cn": "横移定位启动", "data_type": "INT", "d_addr": 1, "comment": "=1触发"},
+    {"var_name": "host_Send_Lift_PosNo", "name_cn": "提升位置号", "data_type": "INT", "d_addr": 2, "comment": "M2提升目标位置号(1~5)"},
+    {"var_name": "host_Send_Lift_Start", "name_cn": "提升定位启动", "data_type": "INT", "d_addr": 3, "comment": "=1触发"},
+    {"var_name": "host_Send_Gripper_Fwd", "name_cn": "夹爪夹紧", "data_type": "INT", "d_addr": 4, "comment": "=1夹紧"},
+    {"var_name": "host_Send_Gripper_Rev", "name_cn": "夹爪松开", "data_type": "INT", "d_addr": 5, "comment": "=1松开"},
+    {"var_name": "host_Send_Roller_Fwd", "name_cn": "辊筒正转", "data_type": "INT", "d_addr": 6, "comment": "=1正转"},
+    {"var_name": "host_Send_Roller_Rev", "name_cn": "辊筒反转", "data_type": "INT", "d_addr": 7, "comment": "=1反转"}
+  ],
+  "comm_read": [
+    {"var_name": "host_Rcv_Cross_StateMachine", "name_cn": "横移状态机", "data_type": "INT", "d_addr": 8, "comment": "正常=3"},
+    {"var_name": "host_Rcv_Lift_StateMachine", "name_cn": "提升状态机", "data_type": "INT", "d_addr": 9, "comment": "正常=3"},
+    {"var_name": "host_Rcv_Cross_Position", "name_cn": "横移实际位置", "data_type": "REAL", "d_addr": 10, "comment": "REAL占2地址(10-11)"},
+    {"var_name": "host_Rcv_Lift_Position", "name_cn": "提升实际位置", "data_type": "REAL", "d_addr": 12, "comment": "REAL占2地址(12-13)"},
+    {"var_name": "host_Rcv_Cross_MoveDone", "name_cn": "横移定位完成", "data_type": "INT", "d_addr": 14, "comment": "=1到位"},
+    {"var_name": "host_Rcv_Lift_MoveDone", "name_cn": "提升定位完成", "data_type": "INT", "d_addr": 15, "comment": "=1到位"},
+    {"var_name": "host_Rcv_Grip_LimitPos", "name_cn": "夹爪正限位", "data_type": "INT", "d_addr": 16, "comment": "触发1"},
+    {"var_name": "host_Rcv_Grip_LimitNeg", "name_cn": "夹爪负限位", "data_type": "INT", "d_addr": 17, "comment": "触发1"}
+  ],
+  "io": [
+    {"var_name": "in_EStop", "data_type": "BOOL", "address": "X0", "filter_mode": "none", "comment": "急停(常闭,不滤波)"},
+    {"var_name": "in_Auto", "data_type": "BOOL", "address": "X1", "filter_mode": "builtin", "comment": "自动位"},
+    {"var_name": "in_Manual", "data_type": "BOOL", "address": "X2", "filter_mode": "builtin", "comment": "手动位"},
+    {"var_name": "in_Grip_LimitPos", "data_type": "BOOL", "address": "X10", "filter_mode": "builtin", "comment": "夹爪正限位(常闭)"},
+    {"var_name": "in_Grip_LimitNeg", "data_type": "BOOL", "address": "X11", "filter_mode": "builtin", "comment": "夹爪负限位(常闭)"},
+    {"var_name": "out_Light_Red", "data_type": "BOOL", "address": "Y0", "comment": "红灯(报警)"},
+    {"var_name": "out_Light_Green", "data_type": "BOOL", "address": "Y1", "comment": "绿灯(自动)"},
+    {"var_name": "out_Light_Yellow", "data_type": "BOOL", "address": "Y2", "comment": "黄灯(手动)"},
+    {"var_name": "out_Gripper_Path1", "data_type": "BOOL", "address": "Y10", "comment": "夹爪路径1(夹紧)"},
+    {"var_name": "out_Gripper_Path2", "data_type": "BOOL", "address": "Y11", "comment": "夹爪路径2(松开)"}
+  ],
+  "position_tables": {
+    "1": [0.0, 100.0, 200.0, 300.0, 400.0],
+    "2": [0.0, 150.0, 300.0, 450.0, 600.0]
+  },
+  "constants": [
+    {"name": "TIMEOUT_AXIS_MOVE", "data_type": "DINT", "value": "5000", "comment": "定位超时(ms)"},
+    {"name": "AXIS_JOG_VELOCITY", "data_type": "REAL", "value": "10.0", "comment": "点动速度"},
+    {"name": "ERRID_ESTOP", "data_type": "DINT", "value": "16#00000001", "comment": "急停故障位"}
+  ]
+}

@@ -1,0 +1,19 @@
+(* ════════════════════════════════════════════════════════════════════
+   SBR_06 自动控制 - {{ project.name }} (原型: {{ project.archetype }})
+   上位机命令解析: 位置查表 / 握手 / 步进定时 / 辊筒转 / 状态反馈
+   ════════════════════════════════════════════════════════════════════ *)
+{%- for s in actuators.servos %}
+
+(* {{ s.name_cn }} 自动定位: host 位置号 + 启动 *)
+{{ s.cmd_struct }}.Absolute_Execute := con_AutoEnable AND host_Send_{{ s.eng_name }}_Start;
+CASE host_Send_{{ s.eng_name }}_PosNo OF
+{%- for p in pos_tables if p[0] == s.idx %}
+    {{ p[1] }}: {{ s.cmd_struct }}.Absolute_Position := {{ '%.1f' % p[2] }};
+{%- endfor %}
+ELSE
+    {{ s.cmd_struct }}.Absolute_Position := 0.0;
+END_CASE;
+{%- endfor %}
+
+(* 状态反馈 host_Rcv_* *)
+host_Rcv_Heart := host_Send_Heart;

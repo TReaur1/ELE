@@ -1,8 +1,0 @@
-序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
-1,IN,Alarm,BOOL,,,,报警锁存(最高优先级),
-2,IN,AutoMode,BOOL,,,,自动模式,
-3,IN,ManualMode,BOOL,,,,手动模式,
-4,OUT,Light_Red,BOOL,,,,红灯(报警),
-5,OUT,Light_Green,BOOL,,,,绿灯(自动),
-6,OUT,Light_Yellow,BOOL,,,,黄灯(手动),
-7,OUT,Buzzer,BOOL,,,,蜂鸣器(报警时响),

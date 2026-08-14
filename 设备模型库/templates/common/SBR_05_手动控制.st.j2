@@ -1,0 +1,20 @@
+(* ════════════════════════════════════════════════════════════════════
+   SBR_05 手动控制 - {{ project.name }}
+   Jog / 步进 / 辊筒 手动
+   ════════════════════════════════════════════════════════════════════ *)
+{%- for s in actuators.servos %}
+
+(* {{ s.name_cn }} Jog: {{ s.cmd_struct }} *)
+{{ s.cmd_struct }}.JogForward := con_ManualEnable AND hmi_JogP_M{{ s.idx }};
+{{ s.cmd_struct }}.JogBackward := con_ManualEnable AND hmi_JogN_M{{ s.idx }};
+{%- endfor %}
+{%- for sp in actuators.steppers %}
+
+(* {{ sp.name_cn }} 手动: {{ sp.fb_instance }} *)
+{{ sp.fb_instance }}.ManForward := con_ManualEnable AND hmi_StepP_{{ sp.eng_name }};
+{{ sp.fb_instance }}.ManBackward := con_ManualEnable AND hmi_StepN_{{ sp.eng_name }};
+{%- endfor %}
+
+(* 辊筒手动 *)
+con_RollerFwd_Manual := con_ManualEnable AND hmi_Roller_Fwd;
+con_RollerRev_Manual := con_ManualEnable AND hmi_Roller_Rev;

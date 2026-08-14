@@ -1,8 +1,0 @@
-序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
-1,IN,Run,BOOL,,,,运行信号(手动OR自动),
-2,IN,Direction,BOOL,,,,方向(0正1反),
-3,IN,SpeedLevel,INT,,,,速度档(0低/1中/2高),
-4,IN,Enable,BOOL,,,,安全许可,
-5,OUT,OutA,BOOL,,,,A信号(速度档),
-6,OUT,OutB,BOOL,,,,B信号(速度档),
-7,OUT,OutDir,BOOL,,,,方向输出,

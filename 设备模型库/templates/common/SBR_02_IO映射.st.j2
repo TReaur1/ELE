@@ -1,0 +1,23 @@
+(* ════════════════════════════════════════════════════════════════════
+   SBR_02 IO 映射 - {{ project.name }}
+   急停不滤波(filter_mode=none), 内置滤波(builtin), 额外消抖(debounce)
+   ════════════════════════════════════════════════════════════════════ *)
+
+{%- for v in io if v[4] in ('none',) %}
+(* 急停/安全不滤波: {{ v[3] }} *)
+{%- endfor %}
+
+{%- for v in io if v[4] == 'debounce' %}
+(* 额外消抖: {{ v[3] }} (FB_Debounce) *)
+db_{{ v[0][3:] }}(RawIn := {{ v[0] }}, FilterTime := FILTER_TIME_LIMIT);
+{%- endfor %}
+
+(* ── 物理输入映射 ── *)
+{%- for v in io if v[1] == 'BOOL' and v[0].startswith('in_') %}
+{{ v[0] }} := X{{ v[2][1:] }};   (* {{ v[3] }} *)
+{%- endfor %}
+
+(* ── 物理输出映射 ── *)
+{%- for v in io if v[1] == 'BOOL' and v[0].startswith('out_') %}
+Y{{ v[2][1:] }} := {{ v[0] }};   (* {{ v[3] }} *)
+{%- endfor %}

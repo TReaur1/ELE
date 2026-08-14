@@ -1,0 +1,6 @@
+序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
+1,IN,FaultIn,BOOL,,FALSE,,故障源输入,
+2,IN,Reset,BOOL,,FALSE,,复位命令(上升沿),
+3,OUT,Latched,BOOL,,FALSE,,故障锁存输出,
+4,VAR,bLatched,BOOL,,FALSE,,锁存状态,
+5,VAR,r_Fault,TRIG.R_TRIG,,FALSE,,故障边沿检测,

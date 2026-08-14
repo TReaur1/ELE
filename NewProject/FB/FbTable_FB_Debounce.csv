@@ -1,0 +1,5 @@
+序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
+1,IN,RawIn,BOOL,,FALSE,,原始输入信号,
+2,IN,FilterTime,DINT,,20,,滤波时间(ms),
+3,OUT,FilteredOut,BOOL,,FALSE,,滤波后输出,
+4,VAR,ton_Filter,TON,,0,,滤波定时器,
