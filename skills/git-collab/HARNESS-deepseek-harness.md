@@ -75,12 +75,14 @@ DSH 的 `electrical-assistant` 预设内置 5 个 skill：
 
 ## 五、GitHub 推送通道（2026-08-14 已打通）
 
-- **已解决**：HTTPS `Connection reset` / `Could not connect` 是 git 走 HTTP/2 时被中间链路随机重置所致（`curl` 正常、TCP 443 可达但 git 偶发失败）。
-- **修复**（本机全局，对 DSH / opencode / 人工均生效）：
-  - `git config --global http.version HTTP/1.1`（强制 git 用 HTTP/1.1，避开 HTTP/2 重置，实测 6/6 稳定）
-  - hosts 文件已按 GitHub520 维护 `github.com → 20.205.243.166`（`C:\Windows\System32\drivers\etc\hosts`）
-- **当前结论**：DSH 可直接 `git push origin <分支>` 推送到 GitHub，无需人工代推。
-- **若再偶发失败**：重试 1~2 次即可（随机性重置）；或升级为 SSH（`ssh.github.com:443`，需在 GitHub 账户添加公钥，当前无 `.ssh`）。
+- **根因**：HTTPS smart-HTTP（git 走 `https://github.com`）在中间链路被随机 `Connection reset` / 连接超时，且换 IP（GitHub520 hosts）治标不治本——数据传一半仍会被掐断。
+- **最终方案：SSH over 443**（本机全局，对 DSH / opencode / 人工均生效）：
+  - remote 已切换为 SSH：`git@github.com:TReaur1/ELE.git`
+  - `~/.ssh/config` 将 `Host github.com` 映射到 `ssh.github.com:443`（`User git`，密钥 `~/.ssh/id_ed25519_ele`）
+  - 公钥 `kaanh-ELE-collab` 已添加到 GitHub 账号 `TReaur1`
+- **验证**：`ssh -T git@github.com` 返回 `Hi TReaur1!`；`git ls-remote` / `git push --dry-run` 均成功（~4s），本地与远端已同步。
+- **当前结论**：DSH 直接 `git push origin <分支>` 即可，走 443 端口的 SSH 不被 HTTP 层重置，无需人工代推。
+- **遗留**：`git config --global http.version HTTP/1.1`、`http.connectTimeout 6`、hosts 多 IP 回退（github.com ×12）仍保留，供浏览器/其他 HTTPS 访问兜底。
 
 ## 六、期望 opencode 如何与我协作
 
