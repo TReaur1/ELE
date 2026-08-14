@@ -13,7 +13,7 @@
   - 审查脚本注释正则须 `(\(\*[\s\S]*?\*\)|//[^\n]*)`（禁 `//.*`+re.S），并加 BOOL:=0/1、SEL() 返回 INT 的类型一致性硬检查（已内置 `设备模型库/scripts/review_st.py` 与 new plc 审查脚本）
   - 审查应覆盖"表↔代码符号一致性"，不止查新增符号（本次发现 host 表 Rest vs 代码 Reset、BlockUP vs BlockUp 的项目自身不一致）
   - 双份（原程序/优化副本）修改须两边同步 + 旧名残留检查
-- **注**：本次 6 条经验经记忆 keeper deposit 多次超时未能写入，待 keeper 恢复后补录。
+- **注**：6 条经验已全部补录记忆 keeper（LRN-20260814-003~008）。**keeper deposit 修复**：根因=fastembed 模型权重缺失（blobs 空、HF/国内镜像均不可达，download 卡住导致 MCP deposit 超时）；对策=config `embed_backend` 降级为 `lexical`（无 BOM），经验经 CLI deposit 写入成功；MCP server 进程缓存旧 fastembed 状态，需重启 opencode/MCP 后 deposit 完全恢复。
 
 ## v1.2.1 — 2026-08-12
 
