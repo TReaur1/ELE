@@ -10,6 +10,7 @@
 - **唤醒信号约定（协议 7.1）**：topic=wake / 新建 assignee 任务 / blocked 求救三种触发落 inbox。
 - **relay 协作闭环（与 DSH 实时协作）**：处理 DSH 接入确认、watcher 设计议题（=agent_daemon notify，已落地）、auto 回复探索（headless 无 preset 硬伤 → notify 默认 + run-cmd 可挂 preset）；任务 #1/#2 完成。
 - 记忆 keeper 经验（LRN-20260814-003~008）继续生效：字节级改文件、编码识别、审查正则、表↔代码一致性、双份同步。
+- **经验沉淀（9 条，keeper LRN-20260814-009~017）**：SSH over 443 稳定通道 / PowerShell 后台用 subprocess / SQLite 保留字列名 / 守护短轮询 wait=0 / 周期心跳 / 测试子进程全清理 / auto 回复受 preset 限制 / 多 agent 协作标准模式 / detached HEAD 陷阱。
 
 ## v1.2.2 — 2026-08-14
 
