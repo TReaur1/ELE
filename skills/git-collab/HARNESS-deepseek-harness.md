@@ -42,6 +42,18 @@ metadata:
 - **DSH 的增量价值在现场域**：故障排查、参数核实、安全、非标项目全流程跟进、工作日志沉淀——这些 opencode 不覆盖。
 - 遇边界模糊时，以 **CHANGELOG.md + PR 描述** 明确"谁负责、谁复核"，不靠对话口头约定（对话不落盘）。
 
+**分工边界（与 opencode 对齐，2026-08-14）**：
+- **DSH 禁入（或仅 @opencode 复核后参与）**：
+  - PLC 变量表 / FB / 结构体的**结构改动**（R2/R3/R3b 层级）
+  - 设备模型库 `scripts/*.py` 核心（`load_spec` / `generate_tables` / `generate_st` / `review_st`）
+  - `ci_check.py` 审查逻辑
+  - AGENTS.md 的**强制规则**（R1~R4）架构级变更
+- **DSH 多承担**：
+  - 现场经验反馈沉淀（把排查结论转成生成系统的需求/参数约束）
+  - 参数/标准核实结果**归档到仓库**（供其他 harness 复用）
+  - 非标项目全流程 worklog.md
+  - 发现 PLC 表/ST 与现场不符时，**提建议 + 在 PR/CHANGELOG @opencode**（不擅改）
+
 ## 三、我携带的能力（skill，供其他 harness 了解）
 
 DSH 的 `electrical-assistant` 预设内置 5 个 skill：
