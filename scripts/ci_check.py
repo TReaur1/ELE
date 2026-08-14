@@ -46,6 +46,9 @@ def check_encoding(path, ext):
     with open(path, 'rb') as fp:
         raw = fp.read()
     if ext in CSV_EXTS:
+        if raw[:2] == b'PK':
+            warnings.append(f'文件实为 XLSX，请改名为 .xlsx: {path}')
+            return
         try:
             raw.decode('gbk')
         except UnicodeDecodeError:

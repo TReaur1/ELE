@@ -1,40 +1,40 @@
-(* ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
-   SBR_01 Í¨ÓÃ FB ¿â
-   ¹¦ÄÜ: Í³Ò»·â×°¿É¸´ÓÃ¹¦ÄÜ¿é, ½ûÖ¹ÔÚ³ÌĞòÖĞ¸´ÖÆÕ³ÌùÂß¼­
-   ·ÖÀà: 7 ¸öÍ¨ÓÃ FB + 1 ¸öÖá¿Ø FB (FB_EtherCAT_Axis_ST)
-   FB ½Ó¿Ú/ÄÚ²¿±äÁ¿¶ÔÓ¦ FB\FbTable_*.csv (Àà±ğ IN/OUT/INOUT/VAR)
-   ¶¨Ê±ÓÃ TON, ±ßÑØÓÃ TRIG.R_TRIG, Ê±¼ä²ÎÊı DINT(ms)
-   ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T *)
+(* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SBR_01 é€šç”¨ FB åº“
+   åŠŸèƒ½: ç»Ÿä¸€å°è£…å¯å¤ç”¨åŠŸèƒ½å—, ç¦æ­¢åœ¨ç¨‹åºä¸­å¤åˆ¶ç²˜è´´é€»è¾‘
+   åˆ†ç±»: 7 ä¸ªé€šç”¨ FB + 1 ä¸ªè½´æ§ FB (FB_EtherCAT_Axis_ST)
+   FB æ¥å£/å†…éƒ¨å˜é‡å¯¹åº” FB\FbTable_*.csv (ç±»åˆ« IN/OUT/INOUT/VAR)
+   å®šæ—¶ç”¨ TON, è¾¹æ²¿ç”¨ TRIG.R_TRIG, æ—¶é—´å‚æ•° DINT(ms)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• *)
 
 
-(* ©¤©¤ FB1 ÊäÈëÂË²¨: Ìæ´ú TONR ÂãÓÃ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
+(* â”€â”€ FB1 è¾“å…¥æ»¤æ³¢: æ›¿ä»£ TONR è£¸ç”¨ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_Debounce
 VAR_INPUT
-    RawIn       : BOOL;     (* Ô­Ê¼ÊäÈëĞÅºÅ *)
-    FilterTime  : DINT;     (* ÂË²¨Ê±¼ä(ms) *)
+    RawIn       : BOOL;     (* åŸå§‹è¾“å…¥ä¿¡å· *)
+    FilterTime  : DINT;     (* æ»¤æ³¢æ—¶é—´(ms) *)
 END_VAR
 VAR_OUTPUT
-    FilteredOut : BOOL;     (* ÂË²¨ºóÊä³ö *)
+    FilteredOut : BOOL;     (* æ»¤æ³¢åè¾“å‡º *)
 END_VAR
 VAR
-    ton_Filter  : TON;      (* ÂË²¨¶¨Ê±Æ÷ *)
+    ton_Filter  : TON;      (* æ»¤æ³¢å®šæ—¶å™¨ *)
 END_VAR
 ton_Filter(IN := RawIn, PT := FilterTime);
 FilteredOut := ton_Filter.Q;
 
 
-(* ©¤©¤ FB2 ¹ÊÕÏËø´æ: ±ßÑØÖÃÎ», ¹ÊÕÏÏû³ı+¸´Î»²ÅÇå³ı ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
+(* â”€â”€ FB2 æ•…éšœé”å­˜: è¾¹æ²¿ç½®ä½, æ•…éšœæ¶ˆé™¤+å¤ä½æ‰æ¸…é™¤ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_AlarmLatch
 VAR_INPUT
-    FaultIn  : BOOL;        (* ¹ÊÕÏÔ´ÊäÈë *)
-    Reset    : BOOL;        (* ¸´Î»ÃüÁî(ÉÏÉıÑØ) *)
+    FaultIn  : BOOL;        (* æ•…éšœæºè¾“å…¥ *)
+    Reset    : BOOL;        (* å¤ä½å‘½ä»¤(ä¸Šå‡æ²¿) *)
 END_VAR
 VAR_OUTPUT
-    Latched  : BOOL;        (* ¹ÊÕÏËø´æÊä³ö *)
+    Latched  : BOOL;        (* æ•…éšœé”å­˜è¾“å‡º *)
 END_VAR
 VAR
-    bLatched : BOOL;        (* Ëø´æ×´Ì¬ *)
-    r_Fault  : TRIG.R_TRIG; (* ¹ÊÕÏ±ßÑØ¼ì²â *)
+    bLatched : BOOL;        (* é”å­˜çŠ¶æ€ *)
+    r_Fault  : TRIG.R_TRIG; (* æ•…éšœè¾¹æ²¿æ£€æµ‹ *)
 END_VAR
 r_Fault(CLK := FaultIn);
 IF r_Fault.Q THEN
@@ -46,19 +46,19 @@ END_IF;
 Latched := bLatched;
 
 
-(* ©¤©¤ FB3 ÃüÁîÎÕÊÖ: ±ßÑØËø´æ, Íê³É/³¬Ê±/ÖĞÖ¹¸´Î» ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
+(* â”€â”€ FB3 å‘½ä»¤æ¡æ‰‹: è¾¹æ²¿é”å­˜, å®Œæˆ/è¶…æ—¶/ä¸­æ­¢å¤ä½ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_CmdHandshake
 VAR_INPUT
-    Cmd     : BOOL;         (* ÃüÁîÊäÈë(ÉÏÉıÑØ) *)
-    Done    : BOOL;         (* Íê³É·´À¡ *)
-    Timeout : DINT;         (* ³¬Ê±Ê±¼ä(ms) *)
-    Abort   : BOOL;         (* ÖĞÖ¹ÃüÁî *)
+    Cmd     : BOOL;         (* å‘½ä»¤è¾“å…¥(ä¸Šå‡æ²¿) *)
+    Done    : BOOL;         (* å®Œæˆåé¦ˆ *)
+    Timeout : DINT;         (* è¶…æ—¶æ—¶é—´(ms) *)
+    Abort   : BOOL;         (* ä¸­æ­¢å‘½ä»¤ *)
 END_VAR
 VAR_OUTPUT
-    Latched : BOOL;         (* ÃüÁîÒÑËø´æ *)
-    Busy    : BOOL;         (* ÃüÁîÖ´ĞĞÖĞ *)
-    Expired : BOOL;         (* ³¬Ê±±êÖ¾ *)
-    Aborted : BOOL;         (* ÒÑÖĞÖ¹±êÖ¾ *)
+    Latched : BOOL;         (* å‘½ä»¤å·²é”å­˜ *)
+    Busy    : BOOL;         (* å‘½ä»¤æ‰§è¡Œä¸­ *)
+    Expired : BOOL;         (* è¶…æ—¶æ ‡å¿— *)
+    Aborted : BOOL;         (* å·²ä¸­æ­¢æ ‡å¿— *)
 END_VAR
 VAR
     bLatched    : BOOL;
@@ -91,18 +91,18 @@ Expired := bExpired;
 Aborted := bAborted;
 
 
-(* ©¤©¤ FB4 ¶¨Ê±¶¯×÷: ±ßÑØÆô¶¯, ¶¨Ê±/µ½Î»/ÏŞÎ»ÖÕÖ¹ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
+(* â”€â”€ FB4 å®šæ—¶åŠ¨ä½œ: è¾¹æ²¿å¯åŠ¨, å®šæ—¶/åˆ°ä½/é™ä½ç»ˆæ­¢ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_TimedAction
 VAR_INPUT
-    Start  : BOOL;          (* Æô¶¯ÊäÈë(ÉÏÉıÑØ) *)
-    Time   : DINT;          (* ¶¯×÷Ê±³¤(ms) *)
-    InPos  : BOOL;          (* µ½Î»ĞÅºÅ *)
-    Limit  : BOOL;          (* ÏŞÎ»ĞÅºÅ *)
+    Start  : BOOL;          (* å¯åŠ¨è¾“å…¥(ä¸Šå‡æ²¿) *)
+    Time   : DINT;          (* åŠ¨ä½œæ—¶é•¿(ms) *)
+    InPos  : BOOL;          (* åˆ°ä½ä¿¡å· *)
+    Limit  : BOOL;          (* é™ä½ä¿¡å· *)
 END_VAR
 VAR_OUTPUT
-    Running    : BOOL;      (* ¶¯×÷Ö´ĞĞÖĞ *)
-    Done       : BOOL;      (* ¶¯×÷Íê³É *)
-    Terminated : BOOL;      (* ÏŞÎ»ÖÕÖ¹ *)
+    Running    : BOOL;      (* åŠ¨ä½œæ‰§è¡Œä¸­ *)
+    Done       : BOOL;      (* åŠ¨ä½œå®Œæˆ *)
+    Terminated : BOOL;      (* é™ä½ç»ˆæ­¢ *)
 END_VAR
 VAR
     bRunning : BOOL;
@@ -129,23 +129,23 @@ END_IF;
 Running := bRunning;
 
 
-(* ©¤©¤ FB5 ²½½øÇı¶¯: ÊÖ¶¯+×Ô¶¯ºÏ²¢, Õı·´×ª»¥Ëø, ¸´Î»/Í£Ö¹Êä³ö ©¤©¤©¤©¤ *)
+(* â”€â”€ FB5 æ­¥è¿›é©±åŠ¨: æ‰‹åŠ¨+è‡ªåŠ¨åˆå¹¶, æ­£åè½¬äº’é”, å¤ä½/åœæ­¢è¾“å‡º â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_StepperDrive
 VAR_INPUT
-    ManForward  : BOOL;     (* ÊÖ¶¯ÕıÏò *)
-    ManBackward : BOOL;     (* ÊÖ¶¯·´Ïò *)
-    AutoForward : BOOL;     (* ×Ô¶¯ÕıÏò *)
-    AutoBackward: BOOL;     (* ×Ô¶¯·´Ïò *)
-    Reset       : BOOL;     (* ¹ÊÕÏ¸´Î» *)
-    Stop        : BOOL;     (* Í£Ö¹ *)
-    Enable      : BOOL;     (* ÔËĞĞĞí¿É *)
+    ManForward  : BOOL;     (* æ‰‹åŠ¨æ­£å‘ *)
+    ManBackward : BOOL;     (* æ‰‹åŠ¨åå‘ *)
+    AutoForward : BOOL;     (* è‡ªåŠ¨æ­£å‘ *)
+    AutoBackward: BOOL;     (* è‡ªåŠ¨åå‘ *)
+    Reset       : BOOL;     (* æ•…éšœå¤ä½ *)
+    Stop        : BOOL;     (* åœæ­¢ *)
+    Enable      : BOOL;     (* è¿è¡Œè®¸å¯ *)
 END_VAR
 VAR_OUTPUT
-    Forward  : BOOL;        (* ÕıÏòÊä³ö *)
-    Backward : BOOL;        (* ·´ÏòÊä³ö *)
-    Busy     : BOOL;        (* ÔËĞĞÖĞ *)
-    Done     : BOOL;        (* Íê³É *)
-    Error    : BOOL;        (* ¹ÊÕÏ *)
+    Forward  : BOOL;        (* æ­£å‘è¾“å‡º *)
+    Backward : BOOL;        (* åå‘è¾“å‡º *)
+    Busy     : BOOL;        (* è¿è¡Œä¸­ *)
+    Done     : BOOL;        (* å®Œæˆ *)
+    Error    : BOOL;        (* æ•…éšœ *)
 END_VAR
 VAR
     bForward  : BOOL;
@@ -175,20 +175,20 @@ Done     := NOT (bForward OR bBackward);
 Error    := bError;
 
 
-(* ©¤©¤ FB6 µç¹õÍ²: ·½Ïò/ËÙ¶ÈµµºÏ²¢, Èıµµ 50/75/100% ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
+(* â”€â”€ FB6 ç”µè¾Šç­’: æ–¹å‘/é€Ÿåº¦æ¡£åˆå¹¶, ä¸‰æ¡£ 50/75/100% â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_Roller
 VAR_INPUT
-    RunFwd     : BOOL;      (* Õı×ªÆô¶¯ *)
-    RunRev     : BOOL;      (* ·´×ªÆô¶¯ *)
-    SpeedLevel : INT;       (* ËÙ¶Èµµ(1/2/3) *)
-    SpeedLow   : INT;       (* µÍËÙµµ(%) *)
-    SpeedMid   : INT;       (* ÖĞËÙµµ(%) *)
-    SpeedHigh  : INT;       (* ¸ßËÙµµ(%) *)
+    RunFwd     : BOOL;      (* æ­£è½¬å¯åŠ¨ *)
+    RunRev     : BOOL;      (* åè½¬å¯åŠ¨ *)
+    SpeedLevel : INT;       (* é€Ÿåº¦æ¡£(1/2/3) *)
+    SpeedLow   : INT;       (* ä½é€Ÿæ¡£(%) *)
+    SpeedMid   : INT;       (* ä¸­é€Ÿæ¡£(%) *)
+    SpeedHigh  : INT;       (* é«˜é€Ÿæ¡£(%) *)
 END_VAR
 VAR_OUTPUT
-    A     : BOOL;           (* ·½ÏòAÊä³ö *)
-    B     : BOOL;           (* ·½ÏòBÊä³ö *)
-    Speed : INT;            (* ËÙ¶ÈÖµ(%) *)
+    A     : BOOL;           (* æ–¹å‘Aè¾“å‡º *)
+    B     : BOOL;           (* æ–¹å‘Bè¾“å‡º *)
+    Speed : INT;            (* é€Ÿåº¦å€¼(%) *)
 END_VAR
 VAR
     bFwd : BOOL;
@@ -215,19 +215,19 @@ ELSE
 END_CASE;
 
 
-(* ©¤©¤ FB7 ÈıÉ«µÆ: ÓÅÏÈ¼¶ ¹ÊÕÏ > ×Ô¶¯ > ÊÖ¶¯ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
+(* â”€â”€ FB7 ä¸‰è‰²ç¯: ä¼˜å…ˆçº§ æ•…éšœ > è‡ªåŠ¨ > æ‰‹åŠ¨ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
 FUNCTION_BLOCK FB_TowerLight
 VAR_INPUT
-    Fault  : BOOL;          (* ¹ÊÕÏ×´Ì¬ *)
-    Auto   : BOOL;          (* ×Ô¶¯Ä£Ê½ *)
-    Manual : BOOL;          (* ÊÖ¶¯Ä£Ê½ *)
-    RunOK  : BOOL;          (* ÔËĞĞĞí¿É *)
+    Fault  : BOOL;          (* æ•…éšœçŠ¶æ€ *)
+    Auto   : BOOL;          (* è‡ªåŠ¨æ¨¡å¼ *)
+    Manual : BOOL;          (* æ‰‹åŠ¨æ¨¡å¼ *)
+    RunOK  : BOOL;          (* è¿è¡Œè®¸å¯ *)
 END_VAR
 VAR_OUTPUT
-    Red    : BOOL;          (* ºìµÆ *)
-    Yellow : BOOL;          (* »ÆµÆ *)
-    Green  : BOOL;          (* ÂÌµÆ *)
-    Buzzer : BOOL;          (* ·äÃùÆ÷ *)
+    Red    : BOOL;          (* çº¢ç¯ *)
+    Yellow : BOOL;          (* é»„ç¯ *)
+    Green  : BOOL;          (* ç»¿ç¯ *)
+    Buzzer : BOOL;          (* èœ‚é¸£å™¨ *)
 END_VAR
 IF Fault THEN
     Red := TRUE; Yellow := FALSE; Green := FALSE; Buzzer := TRUE;
@@ -240,35 +240,35 @@ ELSE
 END_IF;
 
 
-(* ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
-   FB_EtherCAT_Axis_ST Öá¿Ø FB (EtherCAT ËÅ·ş×¨ÓÃ, R3b)
-   ÄÚ²¿·â×°³§ÉÌ MC_* º¯Êı (²»¸ÄĞ´ MC_*)
-   MC_* ĞÎ²ÎÃûĞè¶ÔÕÕÄ¿±ê AutoShop ¿â°æ±¾Ğ£Ñé
-   ½Ó¿Ú: Axis(IN_OUT) + 14 ÃüÁîÊäÈë ¡ú AxisStatusData(OUT) + Íê³É(OUT)
-   ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T *)
+(* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   FB_EtherCAT_Axis_ST è½´æ§ FB (EtherCAT ä¼ºæœä¸“ç”¨, R3b)
+   å†…éƒ¨å°è£…å‚å•† MC_* å‡½æ•° (ä¸æ”¹å†™ MC_* )
+   MC_* å½¢å‚åéœ€å¯¹ç…§ç›®æ ‡ AutoShop åº“ç‰ˆæœ¬æ ¡éªŒ
+   æ¥å£: Axis(IN_OUT) + 14 å‘½ä»¤è¾“å…¥ â†’ AxisStatusData(OUT) + å®Œæˆ(OUT)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• *)
 FUNCTION_BLOCK FB_EtherCAT_Axis_ST
 VAR_IN_OUT
-    Axis : _sMCAXIS_INFO;   (* Öá¾ä±ú *)
+    Axis : _sMCAXIS_INFO;   (* è½´å¥æŸ„ *)
 END_VAR
 VAR_INPUT
-    PowerEnable            : BOOL;   (* ÖáÊ¹ÄÜ *)
-    Stop                   : BOOL;   (* ÖáÍ£Ö¹ *)
-    Reset                  : BOOL;   (* ¹ÊÕÏ¸´Î» *)
-    Home                   : BOOL;   (* »ØÁãÆô¶¯ *)
-    JogForward             : BOOL;   (* ÕıÏòµã¶¯ *)
-    JogBackward            : BOOL;   (* ·´Ïòµã¶¯ *)
-    Jogvelocity            : REAL;   (* µã¶¯ËÙ¶È *)
-    JogAcceleration        : REAL;   (* µã¶¯¼ÓËÙ¶È *)
-    JogDeceleration        : REAL;   (* µã¶¯¼õËÙ¶È *)
-    Absolute_Execute       : BOOL;   (* ¾ø¶Ô¶¨Î»Æô¶¯ *)
-    Absolute_Position      : REAL;   (* Ä¿±êÎ»ÖÃ *)
-    Absolute_Velocity      : REAL;   (* ¶¨Î»ËÙ¶È *)
-    Absolute_Acceleration  : REAL;   (* ¶¨Î»¼ÓËÙ¶È *)
-    Absolute_Deceleration  : REAL;   (* ¶¨Î»¼õËÙ¶È *)
+    PowerEnable            : BOOL;   (* è½´ä½¿èƒ½ *)
+    Stop                   : BOOL;   (* è½´åœæ­¢ *)
+    Reset                  : BOOL;   (* æ•…éšœå¤ä½ *)
+    Home                   : BOOL;   (* å›é›¶å¯åŠ¨ *)
+    JogForward             : BOOL;   (* æ­£å‘ç‚¹åŠ¨ *)
+    JogBackward            : BOOL;   (* åå‘ç‚¹åŠ¨ *)
+    Jogvelocity            : REAL;   (* ç‚¹åŠ¨é€Ÿåº¦ *)
+    JogAcceleration        : REAL;   (* ç‚¹åŠ¨åŠ é€Ÿåº¦ *)
+    JogDeceleration        : REAL;   (* ç‚¹åŠ¨å‡é€Ÿåº¦ *)
+    Absolute_Execute       : BOOL;   (* ç»å¯¹å®šä½å¯åŠ¨ *)
+    Absolute_Position      : REAL;   (* ç›®æ ‡ä½ç½® *)
+    Absolute_Velocity      : REAL;   (* å®šä½é€Ÿåº¦ *)
+    Absolute_Acceleration  : REAL;   (* å®šä½åŠ é€Ÿåº¦ *)
+    Absolute_Deceleration  : REAL;   (* å®šä½å‡é€Ÿåº¦ *)
 END_VAR
 VAR_OUTPUT
-    AxisStatusData          : AxisStatusData;  (* Öá×´Ì¬½á¹¹ *)
-    Absolute_MoveAbsoluteDone : BOOL;          (* ¾ø¶Ô¶¨Î»Íê³É *)
+    AxisStatusData          : AxisStatusData;  (* è½´çŠ¶æ€ç»“æ„ *)
+    Absolute_MoveAbsoluteDone : BOOL;          (* ç»å¯¹å®šä½å®Œæˆ *)
 END_VAR
 VAR
     fb_Power        : MC_Power;
@@ -291,7 +291,7 @@ VAR
     bHoming         : BOOL;
 END_VAR
 
-(* ÖáÊ¹ÄÜ *)
+(* è½´ä½¿èƒ½ *)
 fb_Power(
     Axis := Axis,
     Enable := PowerEnable,
@@ -303,7 +303,7 @@ fb_Power(
     Error => AxisStatusData.Power.Error,
     ErrorID => AxisStatusData.Power.ErrorID);
 
-(* ¹ÊÕÏ¸´Î» *)
+(* æ•…éšœå¤ä½ *)
 fb_Reset(
     Axis := Axis,
     Execute := Reset,
@@ -312,7 +312,7 @@ fb_Reset(
     Error => AxisStatusData.Reset.Error,
     ErrorID => AxisStatusData.Reset.ErrorID);
 
-(* ÖáÍ£Ö¹ *)
+(* è½´åœæ­¢ *)
 fb_Stop(
     Axis := Axis,
     Execute := Stop,
@@ -324,7 +324,7 @@ fb_Stop(
     Error => AxisStatusData.Stop.Error,
     ErrorID => AxisStatusData.Stop.ErrorID);
 
-(* »ØÁã *)
+(* å›é›¶ *)
 fb_Home(
     Axis := Axis,
     Execute := Home,
@@ -336,7 +336,7 @@ fb_Home(
     Error => AxisStatusData.Home.Error,
     ErrorID => AxisStatusData.Home.ErrorID);
 
-(* µã¶¯ *)
+(* ç‚¹åŠ¨ *)
 fb_Jog(
     Axis := Axis,
     JogForward := JogForward,
@@ -351,7 +351,7 @@ fb_Jog(
     Error => AxisStatusData.Jog.Error,
     ErrorID => AxisStatusData.Jog.ErrorID);
 
-(* ¾ø¶Ô¶¨Î» *)
+(* ç»å¯¹å®šä½ *)
 fb_MoveAbsolute(
     Axis := Axis,
     Execute := Absolute_Execute,
@@ -367,7 +367,7 @@ fb_MoveAbsolute(
     ErrorID => AxisStatusData.MoveAbsolute.ErrorID);
 Absolute_MoveAbsoluteDone := AxisStatusData.MoveAbsolute.Done;
 
-(* ¶ÁÖá×´Ì¬ *)
+(* è¯»è½´çŠ¶æ€ *)
 fb_ReadStatus(
     Axis := Axis,
     Enable := TRUE,
@@ -380,13 +380,13 @@ fb_ReadStatus(
     SynchronizedMotion => bSyncMotion,
     Homing => bHoming);
 
-(* ¶ÁÖá¹ÊÕÏ *)
+(* è¯»è½´æ•…éšœ *)
 fb_ReadAxisError(
     Axis := Axis,
     Enable := TRUE,
     AxisErrorID => AxisStatusData.AxisErrorID);
 
-(* ×´Ì¬»úÓ³Éä 0¶Ï/1´íÎóÍ£/2Í£Ö¹ÖĞ/3¾²Ö¹/4ÀëÉ¢/5Á¬Ğø/6Í¬²½/7»ØÁã *)
+(* çŠ¶æ€æœºæ˜ å°„ 0æ–­/1é”™è¯¯åœ/2åœæ­¢ä¸­/3é™æ­¢/4ç¦»æ•£/5è¿ç»­/6åŒæ­¥/7å›é›¶ *)
 IF bErrorStop THEN
     AxisStatusData.AxisState := 1;
 ELSIF bHoming THEN
@@ -405,7 +405,7 @@ ELSE
     AxisStatusData.AxisState := 0;
 END_IF;
 
-(* »ØÁãÍê³ÉËø´æ: »ØÁãÆô¶¯Çå³ı, »ØÁãÍê³ÉÖÃÎ» *)
+(* å›é›¶å®Œæˆé”å­˜: å›é›¶å¯åŠ¨æ¸…é™¤, å›é›¶å®Œæˆç½®ä½ *)
 r_HomeStart(CLK := Home);
 r_HomeDone(CLK := AxisStatusData.Home.Done);
 IF r_HomeStart.Q THEN
@@ -415,7 +415,7 @@ IF r_HomeDone.Q THEN
     AxisStatusData.ReturnHomeDone := TRUE;
 END_IF;
 
-(* »ã×Ü×´Ì¬ *)
+(* æ±‡æ€»çŠ¶æ€ *)
 AxisStatusData.PowerStatus := AxisStatusData.Power.Status;
 AxisStatusData.Error := AxisStatusData.Power.Error
                      OR AxisStatusData.MoveAbsolute.Error

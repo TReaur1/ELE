@@ -3,9 +3,9 @@ name: PLC 规范审查门禁
 # 多智能体协作：PR 或 push 到主分支时自动审查，不合格拦截合并。
 on:
   pull_request:
-    branches: [master]
+    branches: [main]
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   plc-review:
