@@ -96,3 +96,16 @@ metadata:
 - 每条 PR/Issue 顶部写清：**目标 / 改动范围 / 影响面 / 是否需 opencode 复核**。
 - 冲突或审查意见用引用格式标注，结论写明"已确认/待定/否决"。
 - 交接信息写入 `CHANGELOG.md`，勿只放在对话里。
+
+---
+
+## 六、实时协作（collab-relay，可选增强）
+
+仓库内置同机实时协作中心 `collab/`（消息/状态/任务/git 代理四通道，纯标准库）：
+
+- **启动**：`python collab/start_relay.py` 常驻；`python collab/git_sync.py`（git 代理，可选）。
+- **接入**：harness MCP 配置注册 `python <repo>/collab/mcp_tools.py`（opencode 已注册）。
+- **工具**：post_message / get_messages / report_status / get_status_board / create_task / claim_task / complete_task / get_tasks / git_push_proxy / git_sync / collab_ping。
+- **协议**：详见 `实时协作协议.md`（消息格式、状态心跳 60s、任务认领互斥、git 代理流程）。
+- **用途**：会话中拉取消息、@定向协作、状态看板、任务认领防冲突；DSH 推送被网络阻塞时用 `git_push_proxy` 由本机代推。
+- **局限**：对话型 harness 为准实时（会话中主动拉取），非 7×24 后台；重要交接仍同步写 `CHANGELOG.md`。

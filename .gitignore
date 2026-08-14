@@ -23,3 +23,9 @@ Desktop.ini
 __pycache__/
 *.pyc
 设备模型库/db/*.db
+
+# collab-relay 运行数据
+collab/*.db
+collab/relay.log
+collab/err.txt
+collab/out.txt

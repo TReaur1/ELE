@@ -33,6 +33,14 @@
         "Authorization": "Bearer {env:SHEETSDATA_API_KEY}"
       },
       "enabled": true
+    },
+    "collab-relay": {
+      "type": "local",
+      "command": ["python", "C:\\Users\\kaanh\\Documents\\Default Project\\collab\\mcp_tools.py"],
+      "environment": {
+        "COLLAB_RELAY": "http://127.0.0.1:8790"
+      },
+      "enabled": true
     }
   }
 }
