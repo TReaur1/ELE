@@ -2,6 +2,19 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.2.2 — 2026-08-14
+
+- **new plc 工程优化并同步原程序**：`C:\Users\kaanh\Desktop\new plc` AGV 输送线项目按 AGENTS 规则优化产出 `优化\` 副本（5 表 + 5 SBR + 常量/实例表），并将改名（`in_Rest→in_Reset`、`host_Rcv_Rest→host_Rcv_Reset`、`hmi_*Volecity→Velocity`、`BlockUP→BlockUp`）与类型修复（`mc_Lift*Execute := 0/1 → TRUE/FALSE`）以**字节级替换**同步回原程序。
+- **事故与恢复**：首轮"解码→重写"脚本使 `sbr_host.md` 截断为 0 字节；通过 gb18030 逆向编码（`encode('gbk')` 还原被误解码的 UTF8 字节、处理 .NET 解码产生的 PUA 字符）完整恢复。
+- **经验复盘（用户确认全项）**：
+  - 就地改 GBK/UTF8 原文件**禁止解码重写**（`open('wb')` 先截断、编码失败即丢数据），必须字节级 `.replace()`
+  - 操作前确认每文件实际编码（.md 可能 UTF8、CSV 可能 GBK），勿按扩展名想当然
+  - GBK 误解码的 UTF8 备份可用 gb18030 逆向还原（处理 PUA）
+  - 审查脚本注释正则须 `(\(\*[\s\S]*?\*\)|//[^\n]*)`（禁 `//.*`+re.S），并加 BOOL:=0/1、SEL() 返回 INT 的类型一致性硬检查（已内置 `设备模型库/scripts/review_st.py` 与 new plc 审查脚本）
+  - 审查应覆盖"表↔代码符号一致性"，不止查新增符号（本次发现 host 表 Rest vs 代码 Reset、BlockUP vs BlockUp 的项目自身不一致）
+  - 双份（原程序/优化副本）修改须两边同步 + 旧名残留检查
+- **注**：本次 6 条经验经记忆 keeper deposit 多次超时未能写入，待 keeper 恢复后补录。
+
 ## v1.2.1 — 2026-08-12
 
 - **AutoShop 手册研读**：解包 `AutoShop.chm`（H1U/H2U/H3U 梯形图系联机帮助），精读软元件/定位/滤波/看门狗/通讯/调试/常见问题等 40+ 页面，产出 `C:\Users\kaanh\Desktop\综合修改\AutoShop_编程经验总结.md`（8 章：工程管理 / 软元件分配 / 定位指令 / 定时报警指令 / 通讯 / 程序结构 / 调试交付 / 常见坑）
