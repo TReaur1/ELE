@@ -1,6 +1,6 @@
 序号,成员变量名,数据类型,注释,
 1,PowerEnable,BOOL,轴使能,
-2,Stop,BOOL,轴停止(立即,优先级最高),
+2,Stop,BOOL,轴停止(立即,优先级最高)
 3,Reset,BOOL,故障复位(上升沿),
 4,Home,BOOL,回零启动(上升沿),
 5,JogForward,BOOL,正向点动,

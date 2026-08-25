@@ -1,0 +1,8 @@
+序号,变量名,数据类型,隐藏初始值,初始值,掉电保持,网络公开,注释,软元件地址,
+1,in_eStop,BOOL,FALSE,,FALSE,TRUE,急停输入(TRUE=释放 安全态) X0最短滤波不软件消抖,X0,
+2,in_Reset,BOOL,FALSE,,FALSE,TRUE,复位按钮(报警复位/手动阻挡切换复用),X1,
+3,in_ModeAuto,BOOL,FALSE,,FALSE,TRUE,手自动选择旋钮(TRUE=自动),X2,
+4,in_BlockUpSns,BOOL,FALSE,,FALSE,TRUE,阻挡上升到位磁开关,X3,
+5,in_BlockDnSns,BOOL,FALSE,,FALSE,TRUE,阻挡下降到位磁开关,X4,
+6,out_RollerRun,BOOL,FALSE,,FALSE,TRUE,滚筒运行输出(经电机驱动器),Y0,
+7,out_BlockUp,BOOL,FALSE,,FALSE,TRUE,阻挡电磁阀(TRUE=升起阻挡),Y1,

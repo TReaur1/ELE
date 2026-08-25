@@ -1,0 +1,7 @@
+序号,变量名,数据类型,隐藏初始值,初始值,掉电保持,网络公开,注释,软元件地址,
+1,FILTER_TIME_INPUT,DINT,,20,TRUE,,输入软件消抖时间(ms) 本工程内置滤波为主 此值备用 常量,,
+2,BLOCK_HOLD_TIME,DINT,,3000,TRUE,,自动模式 阻挡保持输送时长(ms) 常量,,
+3,BLOCK_PASS_TIME,DINT,,5000,TRUE,,自动模式 放行时长(ms) 常量,,
+4,CYL_TIMEOUT,DINT,,2000,TRUE,,气缸动作到位超时阈值(ms) 常量,,
+5,COMM_HEART_TIMEOUT,DINT,,3000,TRUE,,入向心跳超时阈值(ms) 超时判通讯丢失 常量,,
+6,COMM_HEART_TICK,DINT,,1000,TRUE,,出向心跳自增周期(ms) 常量,,
