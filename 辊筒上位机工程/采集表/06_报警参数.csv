@@ -1,0 +1,9 @@
+序号,类别,名称,检测来源或值,单位,锁存需复位,备注
+1,alarm,EstopLatch,NOT in_eStop 急停按下,-,是,释放+复位边沿才解除
+2,alarm,CylTimeout,CYL_TIMEOUT内未见磁开到位,ms,是,接锁存闭环 切断输出
+3,const,CYL_TIMEOUT,3000,ms,,气缸到位超时阈值
+4,const,COMM_HEART_TIMEOUT,3000,ms,,入向心跳超时判通讯丢失
+5,const,COMM_HEART_TICK,1000,ms,,出向心跳自增周期
+6,const,RTU_PORT,0,-,,RS485端口号 COM0 工程配置须设ModbusRTU主站
+7,const,DRV_ADDR,1,-,,驱动器从站站号
+8,const,DRV_SPD_REG,8192,-,,频率寄存器 H2000(0.01Hz)

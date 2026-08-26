@@ -50,10 +50,10 @@ def walk():
 
 
 def _parse_csv(path):
-    """GBK 解析 CSV, 返回行列表(已按 csv 规则分隔)."""
+    """GBK 解析 CSV, 返回行列表(已按 csv 规则分隔). splitlines 规避 CRLF 报错."""
     with open(path, 'rb') as fp:
         raw = fp.read().decode('gbk', errors='replace')
-    return [r for r in csv.reader(io.StringIO(raw)) if r]
+    return [r for r in csv.reader(raw.splitlines()) if r]
 
 
 def check_encoding(path, ext):
@@ -107,6 +107,27 @@ def check_cn_identifier(path, ext):
     text = re.sub(r"//[^\n]*", '', text)
     for m in re.finditer(r'[\u4e00-\u9fff]+', text):
         errors.append(f'R1 违规: {path} 含中文 "{m.group()}"')
+
+
+def check_fb_no_var_declare(path):
+    """FB 交付形式: FB\\*\\*.st 禁止出现变量声明块 (所有变量只进 _变量.csv)."""
+    norm = path.replace(os.sep, '/')
+    if '/fb/' not in norm.lower() or not norm.lower().endswith('.st'):
+        return
+    text = open(path, 'r', encoding='utf-8', errors='replace').read()
+    # 去掉注释后再查 (注释中提及关键字不算违规)
+    code = re.sub(r'\(\*[\s\S]*?\*\)', '', text)
+    code = re.sub(r"//[^\n]*", '', code)
+    for kw in ('VAR_INPUT', 'VAR_OUTPUT', 'VAR_IN_OUT', 'END_VAR'):
+        if re.search(r'\b' + kw + r'\b', code):
+            errors.append(
+                f'FB 形式违规: {path} 含 {kw} 声明 — '
+                f'FB 的 st 仅写程序逻辑, 变量一律放 _变量.csv')
+            return
+    if re.search(r'^\s*VAR\b', code, re.M):
+        errors.append(
+            f'FB 形式违规: {path} 含 VAR 声明块 — '
+            f'FB 的 st 仅写程序逻辑, 变量一律放 _变量.csv')
 
 
 def check_magic(path, ext):
@@ -176,6 +197,30 @@ def check_comm_host(comm_path, comm, host_path, host):
                 f'({os.path.basename(comm_path)} vs {os.path.basename(host_path)})')
 
 
+def check_ton_direct(path, ext):
+    """定时器直调: 功能块实例表不得出现 TON 数据类型行; st 不得出现 ton_xxx 命名实例."""
+    if ext in CSV_EXTS:
+        rows = _parse_csv(path)
+        if not rows:
+            return
+        hdr = ','.join(str(x) for x in rows[0])
+        if '变量名' not in hdr or '数据类型' not in hdr:
+            return
+        for i, r in enumerate(rows[1:], 2):
+            if len(r) >= 3 and r[2].strip() == 'TON':
+                errors.append(
+                    f'定时器直调违规: {path} 第{i}行声明了命名 TON 实例 "{r[1]}" — '
+                    f'定时器一律 TONR() 直接调用(细则5)')
+    if ext in CODE_EXTS:
+        text = open(path, 'r', encoding='utf-8', errors='replace').read()
+        text = re.sub(r'\(\*[\s\S]*?\*\)', '', text)
+        text = re.sub(r"//[^\n]*", '', text)
+        for m in re.finditer(r'\bton_[A-Za-z]\w*\s*\(', text):
+            errors.append(
+                f'定时器直调违规: {path} 命名定时器实例调用 "{m.group().rstrip("(")}" — '
+                f'定时器一律 TONR() 直接调用(细则5)')
+
+
 def main():
     comm_tables = []   # (path, info)
     host_tables = []   # (path, info)
@@ -183,6 +228,8 @@ def main():
         check_encoding(path, ext)
         check_cn_identifier(path, ext)
         check_magic(path, ext)
+        check_fb_no_var_declare(path)
+        check_ton_direct(path, ext)
         check_csv_cols(path, ext)
         if ext in CSV_EXTS:
             info = _collect(_parse_csv(path))

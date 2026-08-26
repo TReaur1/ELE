@@ -1,0 +1,6 @@
+序号,类别,名称,检测来源或值,单位,锁存需复位,备注
+1,alarm,CylTimeout,ton_CylWatch气缸到位超时,ms,是,接FB_AlarmLatch锁存闭环
+2,const,BLOCK_HOLD_TIME,3000,ms,,自动阻挡保持时长
+3,const,BLOCK_PASS_TIME,5000,ms,,自动放行时长
+4,const,CYL_TIMEOUT,2000,ms,,气缸到位超时阈值
+5,const,FILTER_TIME_INPUT,20,ms,,软件消抖备用

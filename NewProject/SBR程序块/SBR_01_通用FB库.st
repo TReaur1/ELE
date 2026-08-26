@@ -12,15 +12,15 @@ FUNCTION_BLOCK FB_Debounce
 VAR_INPUT
     RawIn       : BOOL;     (* 原始输入信号 *)
     FilterTime  : DINT;     (* 滤波时间(ms) *)
+    xFilterQ  : BOOL;   (* TONR直调滤波输出Q *)
 END_VAR
 VAR_OUTPUT
     FilteredOut : BOOL;     (* 滤波后输出 *)
 END_VAR
 VAR
-    ton_Filter  : TON;      (* 滤波定时器 *)
 END_VAR
-ton_Filter(IN := RawIn, PT := FilterTime);
-FilteredOut := ton_Filter.Q;
+TONR(IN := RawIn, PT := FilterTime, Q => xFilterQ);
+FilteredOut := xFilterQ;
 
 
 (* ── FB2 故障锁存: 边沿置位, 故障消除+复位才清除 ───────────────── *)
@@ -53,6 +53,7 @@ VAR_INPUT
     Done    : BOOL;         (* 完成反馈 *)
     Timeout : DINT;         (* 超时时间(ms) *)
     Abort   : BOOL;         (* 中止命令 *)
+    xTimeoutQ : BOOL;   (* TONR直调超时输出Q *)
 END_VAR
 VAR_OUTPUT
     Latched : BOOL;         (* 命令已锁存 *)
@@ -65,7 +66,6 @@ VAR
     bExpired    : BOOL;
     bAborted    : BOOL;
     r_Cmd       : TRIG.R_TRIG;
-    ton_Timeout : TON;
 END_VAR
 r_Cmd(CLK := Cmd);
 IF r_Cmd.Q THEN
@@ -80,8 +80,8 @@ END_IF;
 IF bLatched AND Done THEN
     bLatched := FALSE;
 END_IF;
-ton_Timeout(IN := bLatched, PT := Timeout);
-IF ton_Timeout.Q THEN
+TONR(IN := bLatched, PT := Timeout, Q => xTimeoutQ);
+IF xTimeoutQ THEN
     bExpired := TRUE;
     bLatched := FALSE;
 END_IF;
@@ -98,6 +98,7 @@ VAR_INPUT
     Time   : DINT;          (* 动作时长(ms) *)
     InPos  : BOOL;          (* 到位信号 *)
     Limit  : BOOL;          (* 限位信号 *)
+    xTimeQ    : BOOL;   (* TONR直调定时输出Q *)
 END_VAR
 VAR_OUTPUT
     Running    : BOOL;      (* 动作执行中 *)
@@ -107,14 +108,13 @@ END_VAR
 VAR
     bRunning : BOOL;
     r_Start  : TRIG.R_TRIG;
-    ton_Time : TON;
 END_VAR
 r_Start(CLK := Start);
 IF r_Start.Q THEN
     bRunning := TRUE;
 END_IF;
-ton_Time(IN := bRunning, PT := Time);
-IF bRunning AND (ton_Time.Q OR InPos) THEN
+TONR(IN := bRunning, PT := Time, Q => xTimeQ);
+IF bRunning AND (xTimeQ OR InPos) THEN
     bRunning := FALSE;
     Done := TRUE;
 END_IF;

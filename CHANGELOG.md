@@ -2,6 +2,18 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.4.0 — 2026-08-26
+
+- **ST程序包生成体系落地**：采集表范本（6 张中文列 CSV，grill-me 四阶段决策：双用途/CSV→JSON 转换/空范本+examples/fail-fast）+ examples/滚筒阻挡 实例；首例实战交付 **辊筒上位机工程**（采集表范例+变量表+FB 文件夹+SBR_00~08+SBR_host/SBR_rtu+通讯字表 CSV/XLSX）。
+- **C20-400HR 直流无刷驱动器接入**（非变频器）：端子 FWD/REV 启停(Y10/Y11) + CLR 复位脉冲(Y12) + RS485 仅速度给定（2001H，0~3000 RPM）；MB_Master 混合模式（F00.01=1/F00.02=3）；传感器 X3~X7 接入，阀控制升级为输出保持至磁开到位+超时锁存闭环；SEL 表达式实参经变量中转（LiteST 指令实参限制 LRN-20260826-001）。
+- **三大强制规则全局变更**（AGENTS.md 固化 + ci_check 拦截 + 负向验证）：
+  - FB 交付形式：每 FB 一文件夹（变量表 CSV 上方声明 / 纯逻辑 ST 下方，禁 VAR 声明块）；第五张桌面基准 汇川规范FB变量表.csv
+  - TONR 直调：禁命名实例；节拍自翻转/看门狗单点合并两模式
+  - IO 显式映像：SBR_02 输入映像 + SBR_07 输出映像为地址对照唯一真源
+- **ci_check 审计增强**：CSV 列数一致性、通讯字表专项与 host 表一致性、FB 形式违规、TONR 命名实例拦截（均负向验证）
+- **记忆沉淀**：LRN-20260824-001（通讯字表规则）、20260825-001~003、20260826-001~004（LiteST 实参限制/C20 要点/三大规则/工作流范式）；cloud_brain 工程实体
+- **协作基建**（v1.3.x 期间）：collab-relay 四通道实时协作中心、agent_daemon 后台常驻、SSH over 443 推送通道、DSH 对接完成
+
 ## v1.3.1 — 2026-08-14
 
 - **DSH 自动回复打通（headless 挂 preset）**：headless profile `cordis.patch.yml` 插入 `agent-presets`（default=electrical-assistant）；`dsh-headless` 包 runner setup 打补丁（`lib/index.js`，备份 `.bak-ele`）在创建 agent 时 `presets.mount(agentCtx, $DSH_HEADLESS_PRESET ?? defaultId)`。实测：headless 回答汇川 R1 问题正确（标识符仅英文），persona 生效（主动写 worklog.md），MCP 正常拉起。注意：npm 包补丁在 DSH 升级时会被覆盖，需重新应用。

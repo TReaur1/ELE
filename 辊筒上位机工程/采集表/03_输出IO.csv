@@ -1,0 +1,11 @@
+序号,软元件地址,变量名,驱动对象,互锁说明,备注
+1,Y0,out_LampYellow,三色灯黄,优先级 故障>自动>手动,手动位亮
+2,Y1,out_LampGreen,三色灯绿,同上,自动位亮
+3,Y2,out_LampRed,三色灯红,同上,报警亮
+4,Y3,out_Buzzer,蜂鸣器,随报警,
+5,Y4,out_AutoModeSw,手自动切换继电器,,跟随X2旋钮状态输出
+6,Y5,out_CylUp,二位五通阀升线圈,升降互斥,双电控 输出保持至磁开到位
+7,Y6,out_CylDn,二位五通阀降线圈,升降互斥,双电控 输出保持至磁开到位
+8,Y10,out_RollerFwd,C20正转端子FWD,与REV互斥 断开即停机,需扩展输出模块
+9,Y11,out_RollerRev,C20反转端子REV,与FWD互斥,需扩展输出模块
+10,Y12,out_RollerRst,C20故障复位端子CLR,,远程命令触发500ms脉冲

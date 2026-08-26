@@ -1,0 +1,12 @@
+序号	类别	名称	数据类型	隐藏初始值	初始值	掉电保持	注释	
+1	IN	Start	BOOL	OFF	OFF	不保持	启动信号(上升沿)	
+2	IN	Duration	DINT	0	0	不保持	持续时间(ms)	
+3	IN	Terminate	BOOL	OFF	OFF	不保持	终止信号(限位/急停)	
+4	OUT	Running	BOOL	OFF	OFF	不保持	运行中(持续输出)	
+5	OUT	Done	BOOL	OFF	OFF	不保持	完成(脉冲)	
+6	OUT	Timeout	BOOL	OFF	OFF	不保持	超时完成(脉冲)	
+7	VAR	Start_Trig	TRIG.R_TRIG	"(CLK:=OFF	 M:=OFF	 Q:=OFF)"	...	不保持	启动上升沿	
+		Start_Trig.CLK	BOOL		OFF			
+		Start_Trig.Q	BOOL		OFF			
+		Start_Trig.M	BOOL		OFF			
+8	VAR	TmrQ	BOOL	OFF	OFF	不保持	持续时间定时Q	
