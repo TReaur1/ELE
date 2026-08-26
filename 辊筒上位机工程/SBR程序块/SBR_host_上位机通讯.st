@@ -60,9 +60,9 @@ ELSE
 END_IF;
 
 (* ── 驱动器故障复位: 触发式 置边沿 由 SBR_exec 输出脉冲后清0回执 ── *)
-r_DrvReset(CLK := (host_Send_InvReset = 1) AND bRemoteEn);
+r_DrvReset(CLK := (host_Send_DrvReset = 1) AND bRemoteEn);
 IF r_DrvReset.Q THEN
-    host_Send_InvReset := 0;
+    host_Send_DrvReset := 0;
 END_IF;
 
 (* ── 远程复位命令: SBR_03 已消费边沿 此处清0回执 ── *)

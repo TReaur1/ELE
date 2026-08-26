@@ -6,4 +6,4 @@
 5,const,COMM_HEART_TICK,1000,ms,,出向心跳自增周期
 6,const,RTU_PORT,0,-,,RS485端口号 COM0 工程配置须设ModbusRTU主站
 7,const,DRV_ADDR,1,-,,驱动器从站站号
-8,const,DRV_SPD_REG,8192,-,,频率寄存器 H2000(0.01Hz)
+8,const,DRV_SPD_REG,8193,-,,转速设定寄存器 H2001(0~3000RPM 单位1RPM)

@@ -18,6 +18,6 @@
 17,host_Send_CylUp,INT,,0,TRUE,TRUE,命令 阻挡升起 =1触发,D23,
 18,host_Send_CylDn,INT,,0,TRUE,TRUE,命令 阻挡下降 =1触发,D24,
 19,host_Send_EstopReset,INT,,0,TRUE,TRUE,命令 报警/急停锁存解除 =1触发,D25,
-20,host_Send_InvReset,INT,,0,TRUE,TRUE,命令 驱动器CLR复位 =1触发 端子脉冲,D26,
+20,host_Send_DrvReset,INT,,0,TRUE,TRUE,命令 驱动器CLR复位 =1触发 端子脉冲,D26,
 21,host_Send_RollerSpeed,INT,,0,TRUE,TRUE,命令 辊筒转速(1RPM 0~3000) RS485唯一用途,D27,
 22,host_Send_Heart,INT,,0,TRUE,TRUE,命令 入向心跳(周期变值),D28,
