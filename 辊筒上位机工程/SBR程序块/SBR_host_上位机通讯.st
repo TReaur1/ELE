@@ -16,26 +16,28 @@ IF con_HeartTickQ THEN
     con_HeartOut := con_HeartOut + 1;
 END_IF;
 
-(* ── 辊筒命令: 正转/反转/停止 触发式 三者互斥; 执行后清0回执 ── *)
-IF host_Send_RollerStart = 1
-   AND host_Send_RollerStop <> 1 AND host_Send_RollerRev <> 1 THEN
-    bRollerRun := TRUE;
-    bRollerRev := FALSE;
-    host_Send_RollerStart := 0;
-END_IF;
-IF host_Send_RollerRev = 1
-   AND host_Send_RollerStop <> 1 AND host_Send_RollerStart <> 1 THEN
-    bRollerRev := TRUE;
-    bRollerRun := FALSE;
-    host_Send_RollerRev := 0;
-END_IF;
-IF host_Send_RollerStop = 1 THEN
-    bRollerRun := FALSE;
-    bRollerRev := FALSE;
-    host_Send_RollerStop := 0;
-END_IF;
-(* 许可丢失时强制停并清残留命令字 *)
-IF NOT bRemoteEn THEN
+(* ── 辊筒命令映射(PLC控制辊筒第一环):
+      host命令字 -> 运行记忆量 触发式 三者互斥 仅自动位接受 执行后清0回执 ── *)
+IF bRemoteEn THEN
+    IF host_Send_RollerStart = 1
+       AND host_Send_RollerStop <> 1 AND host_Send_RollerRev <> 1 THEN
+        bRollerRun := TRUE;
+        bRollerRev := FALSE;
+        host_Send_RollerStart := 0;
+    END_IF;
+    IF host_Send_RollerRev = 1
+       AND host_Send_RollerStop <> 1 AND host_Send_RollerStart <> 1 THEN
+        bRollerRev := TRUE;
+        bRollerRun := FALSE;
+        host_Send_RollerRev := 0;
+    END_IF;
+    IF host_Send_RollerStop = 1 THEN
+        bRollerRun := FALSE;
+        bRollerRev := FALSE;
+        host_Send_RollerStop := 0;
+    END_IF;
+ELSE
+    (* 非自动位: 清运行记忆量(防切回自动位自恢复) + 拒绝命令并清字回执 *)
     bRollerRun := FALSE;
     bRollerRev := FALSE;
     IF host_Send_RollerStart = 1 THEN host_Send_RollerStart := 0; END_IF;
