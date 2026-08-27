@@ -16,3 +16,5 @@
 15,out_RollerFwd,BOOL,FALSE,,FALSE,TRUE,C20驱动器 正转端子FWD(断开即停),Y10,
 16,out_RollerRev,BOOL,FALSE,,FALSE,TRUE,C20驱动器 反转端子REV(与FWD互斥),Y11,
 17,out_RollerRst,BOOL,FALSE,,FALSE,TRUE,C20驱动器 复位端子CLR(500ms脉冲),Y12,
+18,in_JogRollerFwd,BOOL,FALSE,,FALSE,TRUE,手动按钮点动辊筒正转(预留 需扩展输入模块 X10 暂不接线),X10,
+19,in_JogRollerRev,BOOL,FALSE,,FALSE,TRUE,手动按钮点动辊筒反转(预留 需扩展输入模块 X11 暂不接线 与正转互斥),X11,

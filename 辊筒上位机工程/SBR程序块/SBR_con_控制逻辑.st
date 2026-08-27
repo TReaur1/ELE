@@ -146,3 +146,46 @@ out_RollerRst := bDrvRstPulse;
    本工程为纯上位机控制(host_driven) 无自动工步序列;
    全部动作由上位机命令驱动, 见 SBR_host 与本块段4/段6。
    若日后增加自动节拍, 在此扩展 CASE 步进状态机。 *)
+(* ═══ 段9 点动控制 (预留 暂不使用 注释掉) ══════════════════════════════
+   功能: 触摸屏点动辊筒(正/反) + 触摸屏点动气缸(升/降) + 手动按钮点动辊筒
+   模式: 仅手动位生效(NOT bRemoteEn) 自动位忽略点动输入(不与上位机命令冲突)
+   变量: hmi_JogRollerFwd/Rev hmi_JogCylUp/Dn(hmi表) in_JogRollerFwd/Rev(io表 X10/X11 预留)
+   ════════════════════════════════════════════════════════════════
+   启用步骤(共4处, 逐项完成):
+     [1] 删除本段外层块注释(本行上方起始符与下方结束符)
+     [2] SBR_host 段3/段4 的 ELSE 手动位清命令分支 追加豁免:
+           ELSE 改为 ELSIF NOT bJogActive  (急停注销块不受影响)
+     [3] SBR_con 段4 强制失电豁免: IF NOT bRemoteEn THEN bCylValveOn := FALSE
+           改为 IF NOT bRemoteEn AND NOT bJogActive THEN bCylValveOn := FALSE
+     [4] SBR_con 段6 Roller_1 Enable 参数 bRemoteEn 改为 bRemoteEn OR bJogActive;
+           段7 输出门控 IF bRemoteEn THEN 改为 IF bRemoteEn OR bJogActive THEN;
+           并在 SBR_io 补映射: in_JogRollerFwd := X10; in_JogRollerRev := X11;
+   ════════════════════════════════════════════════════════════════
+   点动逻辑体(按下转 松开停; 气缸点动得电升/失电降 单电控):
+   // 点动激活: 任一输入按下
+   bJogActive := hmi_JogRollerFwd OR hmi_JogRollerRev
+               OR in_JogRollerFwd OR in_JogRollerRev
+               OR hmi_JogCylUp OR hmi_JogCylDn;
+
+   IF bJogActive THEN
+       // 辊筒点动: 正转优先 互斥 按下转 松开停
+       IF (hmi_JogRollerFwd OR in_JogRollerFwd)
+          AND NOT (hmi_JogRollerRev OR in_JogRollerRev) THEN
+           bRollerRun := TRUE;
+           bRollerRev := FALSE;
+       ELSIF (hmi_JogRollerRev OR in_JogRollerRev)
+             AND NOT (hmi_JogRollerFwd OR in_JogRollerFwd) THEN
+           bRollerRev := TRUE;
+           bRollerRun := FALSE;
+       ELSE
+           bRollerRun := FALSE;      // 松开即停
+           bRollerRev := FALSE;
+       END_IF;
+       // 气缸点动: 升得电 降失电(单电控 弹簧回)
+       IF hmi_JogCylUp THEN
+           bCylValveOn := TRUE;
+       ELSIF hmi_JogCylDn THEN
+           bCylValveOn := FALSE;
+       END_IF;
+   END_IF;
+   ════════════════════════════════════════════════════════════════ *)

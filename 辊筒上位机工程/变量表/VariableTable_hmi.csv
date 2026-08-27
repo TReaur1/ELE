@@ -1,0 +1,5 @@
+序号,变量名,数据类型,隐藏初始值,初始值,掉电保持,网络公开,注释,软元件地址,
+1,hmi_JogRollerFwd,BOOL,FALSE,,FALSE,TRUE,触摸屏点动辊筒正转(按下=TRUE 松开=FALSE 仅手动位),,
+2,hmi_JogRollerRev,BOOL,FALSE,,FALSE,TRUE,触摸屏点动辊筒反转(按下=TRUE 松开=FALSE 与正转互斥),,
+3,hmi_JogCylUp,BOOL,FALSE,,FALSE,TRUE,触摸屏点动气缸升(按下=TRUE 线圈得电 单电控),,
+4,hmi_JogCylDn,BOOL,FALSE,,FALSE,TRUE,触摸屏点动气缸降(按下=TRUE 线圈失电 弹簧复位),,
