@@ -43,6 +43,9 @@ IF con_CommLost         THEN con_AlarmWord := con_AlarmWord OR 2#0100; END_IF;
 (* 全局运行许可: 报警字为零才允许运行 (报警机制第4环 唯一真源) *)
 bRunOK := (con_AlarmWord = 0);
 
+(* 急停活跃标志: 按下或锁存活跃 -> 命令注销门控 (SBR_host 消费, 防释放复位后旧命令自恢复) *)
+con_EstopActive := bEstopPressed OR Latch_Estop.AlarmOut;
+
 (* ═══ 段2 模式管理 ════════════════════════════════════════════════
    手自动旋钮: 自动位(TRUE)=上位机远程命令生效; 手动位=本地安全待机(输出全断)
    纯上位机控制工程无本地动作机构 手动位即维修/调试安全态 (互斥) *)

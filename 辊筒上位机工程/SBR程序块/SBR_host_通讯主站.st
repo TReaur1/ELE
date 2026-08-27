@@ -40,9 +40,27 @@ IF con_HeartTickQ THEN
     con_HeartOut := con_HeartOut + 1;
 END_IF;
 
+(* ═══ 段2.5 急停命令注销 (安全 显式) ══════════════════════════════════
+   急停按下或锁存活跃(con_EstopActive)时, 强制清除全部命令记忆与控制输出记忆,
+   使急停真正达到"停机且释放复位后不自恢复"的目的; 同时拒绝一切入向命令字(清0回执)。
+   此即要求的"急停清除其他指令和控制给的命令"功能。 *)
+IF con_EstopActive THEN
+    bRollerRun      := FALSE;   (* 辊筒正转命令记忆清零 *)
+    bRollerRev      := FALSE;   (* 辊筒反转命令记忆清零 *)
+    con_CylCmd      := 0;       (* 阀命令清零 *)
+    bCylPos         := 0;       (* 阀位记忆清零 *)
+    con_SpeedTarget := 0;       (* 速度命令清零 *)
+    IF host_Send_RollerStart = 1 THEN host_Send_RollerStart := 0; END_IF;
+    IF host_Send_RollerStop  = 1 THEN host_Send_RollerStop  := 0; END_IF;
+    IF host_Send_RollerRev   = 1 THEN host_Send_RollerRev   := 0; END_IF;
+    IF host_Send_CylUp       = 1 THEN host_Send_CylUp       := 0; END_IF;
+    IF host_Send_CylDn       = 1 THEN host_Send_CylDn       := 0; END_IF;
+    IF host_Send_DrvReset    = 1 THEN host_Send_DrvReset    := 0; END_IF;
+END_IF;
+
 (* ═══ 段3 辊筒命令映射(PLC控制辊筒第一环) ═══════════════════════
       host命令字 -> 运行记忆量 触发式 三者互斥 仅自动位接受 执行后清0回执 *)
-IF bRemoteEn THEN
+IF bRemoteEn AND NOT con_EstopActive THEN
     IF host_Send_RollerStart = 1
        AND host_Send_RollerStop <> 1 AND host_Send_RollerRev <> 1 THEN
         bRollerRun := TRUE;
@@ -70,7 +88,7 @@ ELSE
 END_IF;
 
 (* ═══ 段4 阀命令: 升/降触发式 互斥; 置 con_CylCmd 由 SBR_con 执行 ═══ *)
-IF bRemoteEn THEN
+IF bRemoteEn AND NOT con_EstopActive THEN
     IF host_Send_CylUp = 1 AND host_Send_CylDn <> 1 THEN
         con_CylCmd := 1;
         host_Send_CylUp := 0;
@@ -97,7 +115,9 @@ IF r_HostReset.Q THEN
 END_IF;
 
 (* ═══ 段7 速度设定: 电平缓存式 上位机写目标值 本块段8经RS485转发 ═══ *)
-con_SpeedTarget := host_Send_RollerSpeed;
+IF bRemoteEn AND NOT con_EstopActive THEN
+    con_SpeedTarget := host_Send_RollerSpeed;
+END_IF;
 
 (* ═══ 段8 RS485 主站: 速度转发 (Modbus RTU, MB_Master 指令) ══════ *)
 (* 上电首扫基准对齐 (不主动下发 等待上位机设定/变化) *)
@@ -106,7 +126,7 @@ IF con_SpeedLast < 0 THEN
 END_IF;
 
 (* 发送请求: 仅自动位接受新转速; 变化即请求 失败保留自动重试 *)
-IF NOT bRemoteEn THEN
+IF NOT bRemoteEn AND NOT con_EstopActive THEN
     IF con_SpeedTarget <> con_SpeedLast THEN
         con_SpeedTarget := con_SpeedLast;   (* 非自动位 回退目标为已写值 *)
     END_IF;

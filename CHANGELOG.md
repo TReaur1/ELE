@@ -2,6 +2,15 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.4.8 — 2026-08-27
+
+- **新增急停命令注销功能（用户指出缺失）**：急停按下时仅切断输出是不够的——记忆中的命令(bRollerRun/con_CylCmd/con_SpeedTarget 等)仍在, 释放复位后旧命令会自恢复引发危险。
+  - 控制层置 `con_EstopActive := bEstopPressed OR Latch_Estop.AlarmOut`(已入 con 变量表)。
+  - 通讯层新增**段2.5 急停命令注销**块(命令处理前): 强制清零 `bRollerRun/bRollerRev/con_CylCmd/bCylPos/con_SpeedTarget` 并拒绝一切入向命令字(清0回执)。
+  - 段3/段4/段7/段8 均加 `NOT con_EstopActive` 门控; 速度命令原无条件赋值改为受门控(修复漏清)。
+- AGENTS.md 细则13 补强: 急停活跃须主动清零全部命令记忆, 不能仅靠 bRemoteEn 门控输出的隐式副作用。
+- 工程解读.md 补充急停命令注销关键说明。
+
 ## v1.4.7 — 2026-08-27
 
 - **变量表整理（可读性/美观）**：5 张表（io/const/con/host/功能块实例）统一注释模板——功能短语+括号补充、单位统一 (ms)/(1RPM)、取值统一 `0=x/1=y`、去 const 表冗余"常量"尾字；con 表按 7 功能组重排（安全许可→模式复位→心跳通讯→气缸超时→阀命令→辊筒CLR→速度RTU），序号重编。
