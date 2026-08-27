@@ -1,34 +1,34 @@
 序号,变量名,数据类型,隐藏初始值,初始值,注释
 1,Latch_Estop,FB_AlarmLatch,,,急停锁存实例
-2,Latch_Estop.FaultSrc,BOOL,FALSE,,成员 故障源输入
-3,Latch_Estop.ResetCmd,BOOL,FALSE,,成员 复位命令
-4,Latch_Estop.AlarmOut,BOOL,FALSE,,成员 锁存输出
-5,Latch_Cyl,FB_AlarmLatch,,,气缸超时锁存实例
-6,Latch_Cyl.FaultSrc,BOOL,FALSE,,成员 故障源输入
-7,Latch_Cyl.ResetCmd,BOOL,FALSE,,成员 复位命令
-8,Latch_Cyl.AlarmOut,BOOL,FALSE,,成员 锁存输出
-9,Tower_1,FB_TowerLight,,,三色灯蜂鸣实例
-10,Tower_1.Fault,BOOL,OFF,,成员 报警输入
-11,Tower_1.Auto,BOOL,OFF,,成员 自动模式
-12,Tower_1.Manual,BOOL,OFF,,成员 手动模式
-13,Tower_1.LightRed,BOOL,OFF,,成员 红灯输出
-14,Tower_1.LightYellow,BOOL,OFF,,成员 黄灯输出
-15,Tower_1.LightGreen,BOOL,OFF,,成员 绿灯输出
-16,Tower_1.Buzzer,BOOL,OFF,,成员 蜂鸣输出
-17,Roller_1,FB_Roller,,,辊筒驱动实例(端子启停)
-18,r_ResetBtn,TRIG.R_TRIG,,,本地复位边沿
-19,r_ResetBtn.CLK,BOOL,FALSE,,成员 输入
-20,r_ResetBtn.Q,BOOL,FALSE,,成员 上升沿输出
-21,r_ResetBtn.M,BOOL,FALSE,,成员 内部记忆位
-22,r_HostReset,TRIG.R_TRIG,,,远程复位边沿
-23,r_HostReset.CLK,BOOL,FALSE,,成员 输入
-24,r_HostReset.Q,BOOL,FALSE,,成员 上升沿输出
-25,r_HostReset.M,BOOL,FALSE,,成员 内部记忆位
-26,r_RtuSend,TRIG.R_TRIG,,,RS485发送触发边沿
-27,r_RtuSend.CLK,BOOL,FALSE,,成员 输入
-28,r_RtuSend.Q,BOOL,FALSE,,成员 上升沿输出
-29,r_RtuSend.M,BOOL,FALSE,,成员 内部记忆位
-30,r_DrvReset,TRIG.R_TRIG,,,驱动器CLR复位触发边沿
-31,r_DrvReset.CLK,BOOL,FALSE,,成员 输入
-32,r_DrvReset.Q,BOOL,FALSE,,成员 上升沿输出
-33,r_DrvReset.M,BOOL,FALSE,,成员 内部记忆位
+,Latch_Estop.FaultSrc,BOOL,FALSE,,成员 故障源输入
+,Latch_Estop.ResetCmd,BOOL,FALSE,,成员 复位命令
+,Latch_Estop.AlarmOut,BOOL,FALSE,,成员 锁存输出
+2,Latch_Cyl,FB_AlarmLatch,,,气缸超时锁存实例
+,Latch_Cyl.FaultSrc,BOOL,FALSE,,成员 故障源输入
+,Latch_Cyl.ResetCmd,BOOL,FALSE,,成员 复位命令
+,Latch_Cyl.AlarmOut,BOOL,FALSE,,成员 锁存输出
+3,Tower_1,FB_TowerLight,,,三色灯蜂鸣实例
+,Tower_1.Fault,BOOL,OFF,,成员 报警输入
+,Tower_1.Auto,BOOL,OFF,,成员 自动模式
+,Tower_1.Manual,BOOL,OFF,,成员 手动模式
+,Tower_1.LightRed,BOOL,OFF,,成员 红灯输出
+,Tower_1.LightYellow,BOOL,OFF,,成员 黄灯输出
+,Tower_1.LightGreen,BOOL,OFF,,成员 绿灯输出
+,Tower_1.Buzzer,BOOL,OFF,,成员 蜂鸣输出
+4,Roller_1,FB_Roller,,,辊筒驱动实例(端子启停)
+5,r_ResetBtn,TRIG.R_TRIG,,,本地复位边沿
+,r_ResetBtn.CLK,BOOL,FALSE,,成员 输入
+,r_ResetBtn.Q,BOOL,FALSE,,成员 上升沿输出
+,r_ResetBtn.M,BOOL,FALSE,,成员 内部记忆位
+6,r_HostReset,TRIG.R_TRIG,,,远程复位边沿
+,r_HostReset.CLK,BOOL,FALSE,,成员 输入
+,r_HostReset.Q,BOOL,FALSE,,成员 上升沿输出
+,r_HostReset.M,BOOL,FALSE,,成员 内部记忆位
+7,r_RtuSend,TRIG.R_TRIG,,,RS485发送触发边沿
+,r_RtuSend.CLK,BOOL,FALSE,,成员 输入
+,r_RtuSend.Q,BOOL,FALSE,,成员 上升沿输出
+,r_RtuSend.M,BOOL,FALSE,,成员 内部记忆位
+8,r_DrvReset,TRIG.R_TRIG,,,驱动器CLR复位触发边沿
+,r_DrvReset.CLK,BOOL,FALSE,,成员 输入
+,r_DrvReset.Q,BOOL,FALSE,,成员 上升沿输出
+,r_DrvReset.M,BOOL,FALSE,,成员 内部记忆位
