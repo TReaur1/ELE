@@ -7,3 +7,6 @@
 6,const,RTU_PORT,0,-,,RS485端口号 COM0 工程配置须设ModbusRTU主站
 7,const,DRV_ADDR,1,-,,驱动器从站站号
 8,const,DRV_SPD_REG,8193,-,,转速设定寄存器 H2001(0~3000RPM 单位1RPM)
+9,alarm,con_AlarmWord.bit0,急停锁存,-,是,报警字位0
+10,alarm,con_AlarmWord.bit1,气缸到位超时锁存,-,是,报警字位1
+11,alarm,con_AlarmWord.bit2,通讯断讯(TONR看门狗),-,否,报警字位2 心跳恢复自动解除

@@ -30,10 +30,17 @@ Latch_Estop(FaultSrc := bEstopPressed,
 Latch_Cyl(FaultSrc := con_CylTimeout,
           ResetCmd  := con_ResetCmd AND (NOT con_CylTimeout));
 
-(* 全局运行许可: 无急停锁存 且 无气缸超时锁存 且 通讯正常 *)
-bRunOK := Latch_Estop.AlarmOut = FALSE
-      AND Latch_Cyl.AlarmOut = FALSE
-      AND con_CommLost = FALSE;
+(* 报警字汇编: 位编码 DINT (R4) 每 bit 一类报警 (报警机制第3环)
+     bit0(=1) 急停锁存   bit1(=2) 气缸到位超时锁存
+     bit2(=4) 通讯断讯(自动恢复随动上报)   预留 bit3+ 驱动器故障等
+     位定义见 con 表 / 通讯字表 / 采集表06 注释 *)
+con_AlarmWord := 0;
+IF Latch_Estop.AlarmOut THEN con_AlarmWord := con_AlarmWord OR 1; END_IF;
+IF Latch_Cyl.AlarmOut   THEN con_AlarmWord := con_AlarmWord OR 2; END_IF;
+IF con_CommLost         THEN con_AlarmWord := con_AlarmWord OR 4; END_IF;
+
+(* 全局运行许可: 报警字为零才允许运行 (报警机制第4环 唯一真源) *)
+bRunOK := (con_AlarmWord = 0);
 
 (* ═══ 段2 模式管理 ════════════════════════════════════════════════
    手自动旋钮: 自动位(TRUE)=上位机远程命令生效; 手动位=本地安全待机(输出全断)
