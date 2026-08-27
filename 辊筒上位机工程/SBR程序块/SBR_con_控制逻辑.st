@@ -31,13 +31,14 @@ Latch_Cyl(FaultSrc := con_CylTimeout,
           ResetCmd  := con_ResetCmd AND (NOT con_CylTimeout));
 
 (* 报警字汇编: 位编码 DINT (R4) 每 bit 一类报警 (报警机制第3环)
-     bit0(=1) 急停锁存   bit1(=2) 气缸到位超时锁存
-     bit2(=4) 通讯断讯(自动恢复随动上报)   预留 bit3+ 驱动器故障等
+     LiteST 位运算字面量须用非十进制格式(2#) 禁十进制裸数字
+     bit0(=2#0001) 急停锁存   bit1(=2#0010) 气缸到位超时锁存
+     bit2(=2#0100) 通讯断讯(自动恢复随动上报)   预留 bit3+ 驱动器故障等
      位定义见 con 表 / 通讯字表 / 采集表06 注释 *)
 con_AlarmWord := 0;
-IF Latch_Estop.AlarmOut THEN con_AlarmWord := con_AlarmWord OR 1; END_IF;
-IF Latch_Cyl.AlarmOut   THEN con_AlarmWord := con_AlarmWord OR 2; END_IF;
-IF con_CommLost         THEN con_AlarmWord := con_AlarmWord OR 4; END_IF;
+IF Latch_Estop.AlarmOut THEN con_AlarmWord := con_AlarmWord OR 2#0001; END_IF;
+IF Latch_Cyl.AlarmOut   THEN con_AlarmWord := con_AlarmWord OR 2#0010; END_IF;
+IF con_CommLost         THEN con_AlarmWord := con_AlarmWord OR 2#0100; END_IF;
 
 (* 全局运行许可: 报警字为零才允许运行 (报警机制第4环 唯一真源) *)
 bRunOK := (con_AlarmWord = 0);

@@ -221,6 +221,24 @@ def check_ton_direct(path, ext):
                 f'定时器一律 TONR() 直接调用(细则5)')
 
 
+
+def check_bitop_literal(path, ext):
+    """LiteST 位运算字面量: OR/AND/XOR 整型位运算的操作数禁止十进制裸字面量(须 2#/8#/16#).
+    仅拦数字字面量; BOOL 逻辑运算(变量/TRUE/FALSE)不受限."""
+    if ext not in CODE_EXTS:
+        return
+    try:
+        t = open(path, 'r', encoding='utf-8', errors='replace').read()
+    except Exception:
+        return
+    body = re.sub(r'\(\*[\s\S]*?\*\)', '', t)      # 去块注释
+    body = re.sub(r'//[^\n]*', '', body)           # 去行注释
+    pat = re.compile(r'\b(?:OR|AND|XOR)\s+\d+(?!#)')
+    for m in pat.finditer(body):
+        ln = body[:m.start()].count('\n') + 1
+        errors.append(
+            f'位运算十进制字面量: {path}:{ln} "{m.group()}" -> 须用 2#/8#/16# 格式(AGENTS R4)')
+
 def main():
     comm_tables = []   # (path, info)
     host_tables = []   # (path, info)
@@ -230,6 +248,7 @@ def main():
         check_magic(path, ext)
         check_fb_no_var_declare(path)
         check_ton_direct(path, ext)
+        check_bitop_literal(path, ext)
         check_csv_cols(path, ext)
         if ext in CSV_EXTS:
             info = _collect(_parse_csv(path))
@@ -245,7 +264,7 @@ def main():
             if os.path.dirname(cpath) == proj:
                 check_comm_host(cpath, comm, hpath, host)
     print('== PLC 规范审查 ==')
-    print('检查: 编码 / R1 / 魔法数字 / CSV列数一致性 / 通讯字表校验')
+    print('检查: 编码 / R1 / 魔法数字 / CSV列数 / 通讯字表 / FB形式 / TON直调 / 位运算字面量')
     for w in warnings:
         print(f'  [warn] {w}')
     for e in errors:
