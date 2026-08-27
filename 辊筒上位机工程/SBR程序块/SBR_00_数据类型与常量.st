@@ -7,17 +7,18 @@
        COMM_HEART_TIMEOUT  : DINT = 3000  入向心跳超时阈值(ms)
        COMM_HEART_TICK     : DINT = 1000  出向心跳自增周期(ms)
        RTU_PORT            : INT  = 0     RS485端口号(COM0) 需配置ModbusRTU主站
-       DRV_ADDR            : INT  = 1     驱动器从站站号
-       DRV_SPD_REG        : DINT = 8192  运行频率寄存器(H2000, 0.01Hz)
-   设备构成: 驱动电机带动辊筒(Y0继电器启停; RS485设速) +
-             二位五通双电控电磁阀阻挡气缸(Y1升/Y2降)
+       DRV_ADDR            : INT  = 1     C20驱动器从站站号(F08.00)
+       DRV_SPD_REG         : DINT = 8193  转速设定寄存器(H2001, 0~3000 单位1RPM)
+       DRV_RST_PULSE       : DINT = 500   CLR复位端子脉冲宽(ms)
+   设备构成: C20-400HR 直流无刷驱动器带动电机传动辊筒
+             (端子FWD/REV启停 Y10/Y11; CLR复位 Y12; RS485仅速度给定) +
+             二位五通双电控电磁阀阻挡气缸(Y5升/Y6降)
    传感器  : X3/X4/X5 位置检测(进料段/中段/出料段 光电)
              X6/X7   阻挡气缸升降到位磁开
    控制方式: 纯上位机控制(无自动工步), 手自动旋钮=自动位时远程命令生效
    阀控制  : 命令后线圈输出保持至磁开到位; CYL_TIMEOUT 超时未到位接锁存报警闭环
-   速度设定: 上位机写 host_Send_RollerSpeed(0.01Hz) -> SBR_rtu 经 MB_Master 写驱动器
-   变量表分类: io(X0~X2/Y0~Y2) const con inst host(通讯字见 通讯字表.csv)
-   程序块分层: SBR_02 IO -> SBR_03 安全 -> SBR_04 模式 ->
-               SBR_host 通讯 -> SBR_05 命令执行 -> SBR_06 自动占位 ->
-               SBR_07 输出刷新
+   速度设定: 上位机写 host_Send_RollerSpeed(1RPM) -> SBR_host 经 MB_Master 写 2001H
+   变量表分类: io(X0~X7/Y0~Y12) const con inst host(通讯字见 通讯字表.csv)
+   程序四模块: SBR_io(IO映射) -> SBR_con(控制逻辑) ->
+               SBR_host(通讯主站) -> SBR_status(状态呈现); 主调度见 SBR_08
    ════════════════════════════════════════════════════════════════════ *)
