@@ -4,8 +4,7 @@
 3,Y2,out_LampRed,三色灯红,同上,报警亮
 4,Y3,out_Buzzer,蜂鸣器,随报警,
 5,Y4,out_AutoModeSw,手自动切换继电器,,跟随X2旋钮状态输出
-6,Y5,out_CylUp,二位五通阀升线圈,升降互斥,双电控 输出保持至磁开到位
-7,Y6,out_CylDn,二位五通阀降线圈,升降互斥,双电控 输出保持至磁开到位
-8,Y10,out_RollerFwd,C20正转端子FWD,与REV互斥 断开即停机,需扩展输出模块
-9,Y11,out_RollerRev,C20反转端子REV,与FWD互斥,需扩展输出模块
-10,Y12,out_RollerRst,C20故障复位端子CLR,,远程命令触发500ms脉冲
+6,Y5,out_CylValve,二位五通单电控阀线圈,单线圈,单电控 得电=升 失电=弹簧降 升位须持续得电保持
+7,Y10,out_RollerFwd,C20正转端子FWD,与REV互斥 断开即停机,需扩展输出模块
+8,Y11,out_RollerRev,C20反转端子REV,与FWD互斥,需扩展输出模块
+9,Y12,out_RollerRst,C20故障复位端子CLR,,远程命令触发500ms脉冲

@@ -36,8 +36,7 @@ in_CylDnSns := X7;
       Y2  out_LampRed    三色灯红(报警)          │
       Y3  out_Buzzer     蜂鸣器                  │
       Y4  out_AutoModeSw 手自动切换继电器        │
-      Y5  out_CylUp      阀升线圈                │
-      Y6  out_CylDn      阀降线圈                ┘
+      Y5  out_CylValve   阀线圈(单电控 得电=升)  ┘
       Y10 out_RollerFwd  C20正转FWD  ┐ 扩展输出模块
       Y11 out_RollerRev  C20反转REV  │ (8点继电器型)
       Y12 out_RollerRst  C20复位CLR  ┘ 断FWD/REV即停机 ═══ *)
@@ -46,8 +45,7 @@ Y1  := out_LampGreen;
 Y2  := out_LampRed;
 Y3  := out_Buzzer;
 Y4  := out_AutoModeSw;
-Y5  := out_CylUp;
-Y6  := out_CylDn;
+Y5  := out_CylValve;
 Y10 := out_RollerFwd;
 Y11 := out_RollerRev;
 Y12 := out_RollerRst;

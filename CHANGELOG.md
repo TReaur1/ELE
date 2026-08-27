@@ -2,6 +2,16 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.4.9 — 2026-08-27
+
+- **电磁阀更正为二位五通单电控（用户指正）**：原按双线圈（Y5 升 / Y6 降）设计，实际为**单线圈**——得电=升(伸出)，失电=弹簧复位降(退回)，无自保持，升位须持续得电维持。
+  - io 表：`out_CylUp`→`out_CylValve`(Y5 单电控线圈)，删除 `out_CylDn`(Y6)；软元件 Y6 释放。
+  - con 表：`bCylUpOn`→`bCylValveOn`(阀线圈输出状态 得电=升/失电=降)，删除 `bCylDnOn`；`con_CylCmd` 注释更新(1=升得电保持/2=降失电弹簧回)。
+  - SBR_con 段4 重写为单电控逻辑：命令→阀状态锁存，升得电保持至降命令，降失电弹簧复位；到位判定+悬挂超时保留(升看X6/降看X7)。
+  - SBR_con 段7：`out_CylValve := bCylValveOn`；SBR_io：Y5:=out_CylValve 删 Y6 映射；SBR_host 急停注销块补 `bCylValveOn:=FALSE`。
+  - 同步：采集表 03/04、SBR_00 文档、通讯字表(.csv/.xlsx)、工程解读.md、变量总表.xlsx。
+  - 校验：ci_check 0 ERROR，残留扫描无 `out_CylUp/out_CylDn/bCylUpOn/bCylDnOn/Y6/双电控`。
+
 ## v1.4.8 — 2026-08-27
 
 - **新增急停命令注销功能（用户指出缺失）**：急停按下时仅切断输出是不够的——记忆中的命令(bRollerRun/con_CylCmd/con_SpeedTarget 等)仍在, 释放复位后旧命令会自恢复引发危险。

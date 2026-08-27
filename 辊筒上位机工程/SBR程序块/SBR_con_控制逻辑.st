@@ -55,31 +55,38 @@ bModeAuto := in_ModeAuto;
    运行许可 且 旋钮在自动位 (手动位=本地安全待机 输出全断) *)
 bRemoteEn := bRunOK AND bModeAuto;
 
-(* ═══ 段4 阀输出控制 ══════════════════════════════════════════════
-   命令后线圈保持输出 直至磁开到位确认;
-   悬挂未到位期间 TONR 计时, CYL_TIMEOUT 到 -> con_CylTimeout -> 锁存闭环 *)
-bCylUpOn := FALSE;
-bCylDnOn := FALSE;
-bCylPending := FALSE;
+(* ═══ 段4 阀输出控制 (二位五通单电控) ══════════════════════════════
+   单电控阀: 单线圈 得电=升(伸出) 失电=弹簧复位降(退回)
+   无自保持 升位须持续得电维持; 降命令即失电弹簧回。
+   命令 -> 阀状态锁存(bCylValveOn); 悬挂未到位 TONR 计时
+   -> con_CylTimeout -> 锁存闭环 *)
 IF NOT bRemoteEn THEN
+    con_CylCmd  := 0;
+    bCylValveOn := FALSE;          (* 无许可强制失电=降位(安全) *)
+END_IF;
+
+(* 命令 -> 阀状态: 升得电保持 降失电复位 *)
+IF bRemoteEn AND con_CylCmd = 1 THEN
+    bCylValveOn := TRUE;           (* 升: 得电 保持至降命令 *)
+    con_CylCmd := 0;               (* 消费命令 *)
+ELSIF bRemoteEn AND con_CylCmd = 2 THEN
+    bCylValveOn := FALSE;          (* 降: 失电 弹簧复位 *)
     con_CylCmd := 0;
 END_IF;
 
-IF bRemoteEn AND con_CylCmd = 1 THEN
+(* 到位判定 + 位置记忆 + 悬挂超时 *)
+bCylPending := FALSE;
+IF bCylValveOn THEN
     IF in_CylUpSns THEN
-        con_CylCmd := 0;            (* 已到位: 结束命令 记忆阀位 *)
-        bCylPos := 1;
+        bCylPos := 1;              (* 升到位 *)
     ELSE
-        bCylUpOn := TRUE;           (* 未到位: 保持输出 悬挂计时 *)
-        bCylPending := TRUE;
+        bCylPending := TRUE;       (* 升未到位 计时 *)
     END_IF;
-ELSIF bRemoteEn AND con_CylCmd = 2 THEN
+ELSE
     IF in_CylDnSns THEN
-        con_CylCmd := 0;
-        bCylPos := 2;
+        bCylPos := 2;              (* 降到位 *)
     ELSE
-        bCylDnOn := TRUE;
-        bCylPending := TRUE;
+        bCylPending := TRUE;       (* 降未到位 计时 *)
     END_IF;
 END_IF;
 
@@ -118,15 +125,13 @@ Roller_1(FwdInput   := bRollerRun,
    显式默认 FALSE 无许可强制安全态 (细则13);
    指示类输出(三色灯/蜂鸣)归 SBR_status *)
 out_AutoModeSw  := FALSE;
-out_CylUp       := FALSE;
-out_CylDn       := FALSE;
+out_CylValve    := FALSE;
 out_RollerFwd   := FALSE;
 out_RollerRev   := FALSE;
 out_RollerRst   := FALSE;
 
 IF bRemoteEn THEN
-    out_CylUp     := bCylUpOn;        (* 保持至升到位磁开 *)
-    out_CylDn     := bCylDnOn;        (* 保持至降到位磁开 *)
+    out_CylValve  := bCylValveOn;      (* 单电控: 得电保持升位 *)
     out_RollerFwd := Roller_1.FwdOut;
     out_RollerRev := Roller_1.RevOut;
 END_IF;

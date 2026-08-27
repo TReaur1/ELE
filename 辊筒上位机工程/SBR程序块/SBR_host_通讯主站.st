@@ -48,6 +48,7 @@ IF con_EstopActive THEN
     bRollerRun      := FALSE;   (* 辊筒正转命令记忆清零 *)
     bRollerRev      := FALSE;   (* 辊筒反转命令记忆清零 *)
     con_CylCmd      := 0;       (* 阀命令清零 *)
+    bCylValveOn     := FALSE;   (* 阀线圈输出清零(失电=弹簧降) *)
     bCylPos         := 0;       (* 阀位记忆清零 *)
     con_SpeedTarget := 0;       (* 速度命令清零 *)
     IF host_Send_RollerStart = 1 THEN host_Send_RollerStart := 0; END_IF;
