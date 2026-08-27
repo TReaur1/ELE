@@ -41,4 +41,4 @@ host_Rcv_SnsPos2 := SEL(in_Pos2Sns, 0, 1);
 host_Rcv_SnsPos3 := SEL(in_Pos3Sns, 0, 1);
 host_Rcv_Speed   := con_SpeedTarget;
 host_Rcv_HeartOut := con_HeartOut;
-host_Rcv_AlarmWord := con_AlarmWord;   (* 报警字位编码: bit0急停 bit1气缸超时 bit2断讯 *)
+host_Rcv_AlarmWord := TO_INT(con_AlarmWord);   (* DINT报警字->INT通讯字 显式转换; 位定义限于bit0~15(16位寄存器宽度) *)

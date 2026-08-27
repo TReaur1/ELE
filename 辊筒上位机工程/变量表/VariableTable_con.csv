@@ -1,6 +1,6 @@
 序号,变量名,数据类型,隐藏初始值,初始值,掉电保持,网络公开,注释,软元件地址,
 1,bEstopPressed,BOOL,FALSE,,FALSE,FALSE,急停按下状态(NOT in_eStop),,
-2,con_AlarmWord,DINT,,0,FALSE,FALSE,报警字位编码(bit0急停/bit1气缸超时/bit2断讯 0=无报警),,
+2,con_AlarmWord,DINT,,0,FALSE,FALSE,报警字位编码(bit0急停/bit1气缸超时/bit2断讯 0=无报警; 上报host须TO_INT 位定义限bit0~15),,
 3,bRunOK,BOOL,FALSE,,FALSE,FALSE,运行许可(无急停/气缸超时锁存且通讯正常),,
 4,bRemoteEn,BOOL,FALSE,,FALSE,FALSE,远程控制允许(bRunOK且自动位),,
 5,bModeAuto,BOOL,,FALSE,FALSE,FALSE,当前模式(TRUE=自动位),,
