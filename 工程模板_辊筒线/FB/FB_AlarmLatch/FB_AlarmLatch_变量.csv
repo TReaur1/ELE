@@ -1,0 +1,5 @@
+序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
+1,IN,FaultSrc,BOOL,OFF,OFF,不保持,故障源输入(电平),
+2,IN,ResetCmd,BOOL,OFF,OFF,不保持,复位命令(需上升沿且故障源已消除),
+3,OUT,AlarmOut,BOOL,OFF,OFF,不保持,报警锁存输出,
+4,VAR,bLatched,BOOL,OFF,OFF,不保持,内部锁存位,

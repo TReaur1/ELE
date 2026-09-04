@@ -1,0 +1,8 @@
+序号,类别,名称,数据类型,隐藏初始值,初始值,掉电保持,注释,
+1,IN,Fault,BOOL,OFF,OFF,不保持,报警输入(任一锁存报警或断讯),
+2,IN,Auto,BOOL,OFF,OFF,不保持,自动模式,
+3,IN,Manual,BOOL,OFF,OFF,不保持,手动模式,
+4,OUT,LightRed,BOOL,OFF,OFF,不保持,红灯输出(报警),
+5,OUT,LightYellow,BOOL,OFF,OFF,不保持,黄灯输出(手动),
+6,OUT,LightGreen,BOOL,OFF,OFF,不保持,绿灯输出(自动),
+7,OUT,Buzzer,BOOL,OFF,OFF,不保持,蜂鸣输出(随报警),
