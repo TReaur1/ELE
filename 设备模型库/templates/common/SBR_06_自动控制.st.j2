@@ -1,11 +1,17 @@
 (* ════════════════════════════════════════════════════════════════════
    SBR_06 自动控制 - {{ project.name }} (原型: {{ project.archetype }})
-   上位机命令解析: 位置查表 / 握手 / 步进定时 / 辊筒转 / 状态反馈
+   上位机命令解析: 握手锁存 / 位置查表 / 超时监视 / 状态反馈
    ════════════════════════════════════════════════════════════════════ *)
 {%- for s in actuators.servos %}
 
-(* {{ s.name_cn }} 自动定位: host 位置号 + 启动 *)
-{{ s.cmd_struct }}.Absolute_Execute := con_AutoEnable AND host_Send_{{ s.eng_name }}_Start;
+(* {{ s.name_cn }} 自动定位: host 命令握手 (细则3, 禁电平直驱) + 位置查表 *)
+Handshake_{{ s.eng_name }}(Cmd := host_Send_{{ s.eng_name }}_Start = 1,
+    Done := {{ s.status_struct }}.MoveAbsolute.Done, Timeout := TIMEOUT_CMD_HANDSHAKE,
+    Abort := NOT con_AutoEnable);
+{{ s.cmd_struct }}.Absolute_Execute := con_AutoEnable AND Handshake_{{ s.eng_name }}.Latched;
+IF Handshake_{{ s.eng_name }}.Expired THEN
+    con_TimeoutReq := TRUE;           (* 命令超时 -> SBR_03 锁存报警 *)
+END_IF;
 CASE host_Send_{{ s.eng_name }}_PosNo OF
 {%- for p in pos_tables if p[0] == s.idx %}
     {{ p[1] }}: {{ s.cmd_struct }}.Absolute_Position := {{ '%.1f' % p[2] }};

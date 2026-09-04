@@ -169,8 +169,10 @@ FBS = {
         ('IN', 'Absolute_Velocity', 'REAL', '定位速度'),
         ('IN', 'Absolute_Acceleration', 'REAL', '定位加速度'),
         ('IN', 'Absolute_Deceleration', 'REAL', '定位减速度'),
+        ('IN', 'Timeout', 'DINT', '定位超时时间(ms), 0=不启用'),
         ('OUT', 'AxisStatusData', 'AxisStatusData', '轴状态结构'),
         ('OUT', 'Absolute_MoveAbsoluteDone', 'BOOL', '绝对定位完成'),
+        ('OUT', 'Absolute_Expired', 'BOOL', '绝对定位超时到期'),
         ('VAR', 'fb_Power', 'MC_Power', '使能功能块'),
         ('VAR', 'fb_Reset', 'MC_Reset', '复位功能块'),
         ('VAR', 'fb_Stop', 'MC_Stop', '停止功能块'),
@@ -181,6 +183,9 @@ FBS = {
         ('VAR', 'fb_ReadAxisError', 'MC_ReadAxisError', '读轴故障功能块'),
         ('VAR', 'r_HomeStart', 'TRIG.R_TRIG', '回零启动边沿'),
         ('VAR', 'r_HomeDone', 'TRIG.R_TRIG', '回零完成边沿'),
+        ('VAR', 'r_AbsStart', 'TRIG.R_TRIG', '定位启动边沿'),
+        ('VAR', 'ton_AbsTimeout', 'TON', '定位超时定时器'),
+        ('VAR', 'bAbsTiming', 'BOOL', '定位计时中标志'),
         ('VAR', 'bErrorStop', 'BOOL', '错误停止状态'),
         ('VAR', 'bDisabled', 'BOOL', '轴断使能状态'),
         ('VAR', 'bStopping', 'BOOL', '停止中状态'),
@@ -212,8 +217,10 @@ CON_VARS = [
     ('con_RollerRun_Total', 'BOOL', 'D2015', '辊筒总运行(手动OR自动)'),
     ('con_RollerDir_Total', 'BOOL', 'D2016', '辊筒总方向'),
     ('con_RollerSpeed_Total', 'INT', 'D2017', '辊筒总速度档'),
-    ('con_TimeoutAlarm', 'BOOL', 'D2018', '动作超时报警'),
+    ('con_TimeoutAlarm', 'BOOL', 'D2018', '动作超时报警(锁存输出)'),
     ('con_Scan_Step', 'INT', 'D2019', '扫描步标记'),
+    ('con_TimeoutReq', 'BOOL', 'D2020', '超时检测源(SBR_06置位, SBR_03锁存)'),
+    ('con_AlarmReset', 'BOOL', 'D2021', '报警复位命令(上升沿, 接本地/HMI复位)'),
 ]
 
 # 按原型追加的变量 (自动生成, 不进 JSON 规格单)
@@ -228,6 +235,7 @@ ARCHETYPE_EXTRA = {
             ('con_Step_Init', 'BOOL', '步状态机初始化/回零'),
             ('con_Start', 'BOOL', '自动启动'),
             ('con_Stop', 'BOOL', '自动停止'),
+            ('con_TimeoutQ', 'BOOL', '定位超时瞬时标志(TONR直调Q, 工步间复用)'),
         ],
         'host': [
             ('host_Send_Start', 'INT', '自动启动(=1)', 'write'),

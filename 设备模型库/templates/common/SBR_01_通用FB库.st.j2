@@ -260,10 +260,12 @@ VAR_INPUT
     Absolute_Velocity      : REAL;
     Absolute_Acceleration  : REAL;
     Absolute_Deceleration  : REAL;
+    Timeout                : DINT;     (* 定位超时时间(ms), 0=不启用 *)
 END_VAR
 VAR_OUTPUT
     AxisStatusData          : AxisStatusData;
     Absolute_MoveAbsoluteDone : BOOL;
+    Absolute_Expired        : BOOL;   (* 绝对定位超时到期 *)
 END_VAR
 VAR
     fb_Power        : MC_Power;
@@ -276,6 +278,9 @@ VAR
     fb_ReadAxisError: MC_ReadAxisError;
     r_HomeStart     : TRIG.R_TRIG;
     r_HomeDone      : TRIG.R_TRIG;
+    r_AbsStart      : TRIG.R_TRIG;
+    ton_AbsTimeout  : TON;
+    bAbsTiming      : BOOL;
     bErrorStop      : BOOL;
     bDisabled       : BOOL;
     bStopping       : BOOL;
@@ -311,6 +316,21 @@ fb_MoveAbsolute(Axis := Axis, Execute := Absolute_Execute, Position := Absolute_
     CommandAborted => AxisStatusData.MoveAbsolute.CommandAborted,
     Error => AxisStatusData.MoveAbsolute.Error, ErrorID => AxisStatusData.MoveAbsolute.ErrorID);
 Absolute_MoveAbsoluteDone := AxisStatusData.MoveAbsolute.Done;
+(* 定位超时监视 (细则11): 启动沿起计时, Done/CommandAborted 复位, 限时未完成置 Expired *)
+r_AbsStart(CLK := Absolute_Execute);
+IF r_AbsStart.Q THEN
+    bAbsTiming := TRUE;
+    Absolute_Expired := FALSE;
+END_IF;
+IF AxisStatusData.MoveAbsolute.Done OR AxisStatusData.MoveAbsolute.CommandAborted THEN
+    bAbsTiming := FALSE;
+    Absolute_Expired := FALSE;
+END_IF;
+ton_AbsTimeout(IN := (Timeout > 0) AND bAbsTiming, PT := Timeout);
+IF ton_AbsTimeout.Q THEN
+    Absolute_Expired := TRUE;
+    bAbsTiming := FALSE;
+END_IF;
 fb_ReadStatus(Axis := Axis, Enable := TRUE,
     ErrorStop => bErrorStop, Disabled => bDisabled, Stopping => bStopping, StandStill => bStandStill,
     DiscreteMotion => bDiscreteMotion, ContinuousMotion => bContinuousMotion,

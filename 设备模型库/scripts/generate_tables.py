@@ -201,10 +201,15 @@ def gen_inst_table(con, out_dir, project):
     pid = con.execute('SELECT id FROM project WHERE name=?', (project,)).fetchone()[0]
     rows = []
     n = 1
-    for r in con.execute('SELECT fb_instance, axis_handle FROM actuator WHERE project_id=? AND kind="servo" ORDER BY idx', (pid,)):
-        fb, ah = r
+    # 报警锁存实例 (SBR_03 故障锁存闭环, 全原型必配, 细则2)
+    rows.append('%d,Latch_Timeout,FB_AlarmLatch,,,,' % n); n += 1
+    for r in con.execute('SELECT fb_instance, eng_name FROM actuator WHERE project_id=? AND kind="servo" ORDER BY idx', (pid,)):
+        fb, eng = r
         rows.append('%d,%s,FB_EtherCAT_Axis_ST,,,,' % (n, fb)); n += 1
         rows.append(',%s.Axis,_sMCAXIS_INFO,,,,' % fb)
+        # host_driven: 每伺服命令握手实例 (SBR_06, 细则3)
+        if archetype == 'host_driven':
+            rows.append('%d,Handshake_%s,FB_CmdHandshake,,,,' % (n, eng)); n += 1
     for r in con.execute('SELECT fb_instance FROM actuator WHERE project_id=? AND kind="stepper" ORDER BY idx', (pid,)):
         fb = r[0]
         rows.append('%d,%s,FB_StepperDrive,,,,' % (n, fb)); n += 1

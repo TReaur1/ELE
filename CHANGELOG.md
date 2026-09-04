@@ -2,6 +2,16 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.7.0 — 2026-09-04
+
+- **定位指令超时判定全面实施（worklog 任务#11 修复建议①~④落地，ZCode 编排器执行）**：
+  - **①FB_EtherCAT_Axis_ST 超时接口**：新增 `Timeout(DINT)` 输入与 `Absolute_Expired(BOOL)` 输出——TON 内部监视，`Absolute_Execute` 启动沿清并起计时，Done/CommandAborted 复位，限时未完成置 Expired；FB 变量表同步 5 行；SBR_07 调用传 `TIMEOUT_AXIS_MOVE`（常量从"声明未用"变实际引用）。
+  - **②host_driven 命令握手**：SBR_06 电平直驱改为每伺服 `FB_CmdHandshake` 握手锁存（`Cmd := host_Send_*_Start = 1` 显式比较消除 INT/BOOL 隐式转换；Done=状态机反馈；Timeout=TIMEOUT_CMD_HANDSHAKE；Abort=NOT con_AutoEnable），Expired→超时源；inst 表自动生成每轴 `Handshake_*` 行。
+  - **③internal_seq 步机超时转移**：工步内 `TONR` 直调超时检测（IN=Execute AND NOT Done，PT=TIMEOUT_AXIS_MOVE，**R=NOT Execute 防保持型 ET 累积跨启动误报**），Q→超时源；修正失实注释 TIMEOUT_STEPPER→TIMEOUT_AXIS_MOVE。
+  - **④SBR_03 锁存闭环**：空白占位改为 `Latch_Timeout(FB_AlarmLatch)` 锁存 → `con_TimeoutAlarm` → `con_ErrorID OR/AND NOT ERRID_TIMEOUT`（复位后跟随锁存清除）→ `con_ErrorBit` → `con_RunOK` 联锁；inst 表全原型补 `Latch_Timeout` 行。
+  - **配套**：demo_seq.json 补齐 6 个缺失常量（与 virtual/seq 对齐）；新增 con 变量 `con_TimeoutReq`(D2020)/`con_AlarmReset`(D2021)/`con_TimeoutQ`(internal_seq 扩展)。
+  - **验证**：三工程 `generate.py` 全过（review_st 无硬伤）、verify_counts/verify_consistency OK、ci_check 错误 0；遗留：con_AlarmReset 复位源待接 HMI/本地按钮，SBR_host 看门狗待实施。
+
 ## v1.6.0 — 2026-09-04
 
 - **协作结构升级为编排者-执行者模式（collab-relay v1.1），ZCode 任编排器**：

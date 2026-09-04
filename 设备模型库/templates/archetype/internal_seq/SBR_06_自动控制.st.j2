@@ -2,7 +2,7 @@
    SBR_06 自动控制 - {{ project.name }} (原型: internal_seq)
    步状态机框架 (非标准工步: 人工填写工步体)
    结构: 启动/停止门控 + 步号(STEP_NO) + CASE 分发 + 转移
-   公共模式: 定时(TIMEOUT_STEPPER) / 到位 / 限位 / 互锁 已备好
+   公共模式: 定位超时(TIMEOUT_AXIS_MOVE) / 到位 / 限位 / 互锁 已备好
    工步体由工程师按工艺填写, 转移条件触发 STEP_NO 递增
    ════════════════════════════════════════════════════════════════════ *)
 
@@ -29,6 +29,13 @@ IF con_StepRun THEN
         (* 转移条件: 到位/定时/限位 -> 递增 *)
         IF {{ s.status_struct }}.MoveAbsolute.Done THEN
             con_Step_No := con_Step_No + 1;
+        END_IF;
+        (* 定位超时 (细则11): 启动后限时未见 Done -> 置超时源, SBR_03 锁存报警 *)
+        (* TONR 保持型: R 在命令撤除时复位累计值, 保证每次启动重新计时 *)
+        TONR(IN := {{ s.cmd_struct }}.Absolute_Execute AND NOT {{ s.status_struct }}.MoveAbsolute.Done,
+            PT := TIMEOUT_AXIS_MOVE, R := NOT {{ s.cmd_struct }}.Absolute_Execute, Q => con_TimeoutQ);
+        IF con_TimeoutQ THEN
+            con_TimeoutReq := TRUE;
         END_IF;
 {%- endfor %}
         ELSE

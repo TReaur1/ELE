@@ -55,8 +55,14 @@
     "2": [0.0, 150.0, 300.0, 450.0, 600.0]
   },
   "constants": [
+    {"name": "FILTER_TIME_MATERIAL", "data_type": "DINT", "value": "20", "comment": "物料检测滤波时间(ms)"},
+    {"name": "FILTER_TIME_LIMIT", "data_type": "DINT", "value": "20", "comment": "限位滤波时间(ms)"},
     {"name": "TIMEOUT_AXIS_MOVE", "data_type": "DINT", "value": "5000", "comment": "定位超时(ms)"},
+    {"name": "TIMEOUT_CMD_HANDSHAKE", "data_type": "DINT", "value": "5000", "comment": "命令握手超时(ms)"},
+    {"name": "WATCHDOG_TIMEOUT", "data_type": "DINT", "value": "3000", "comment": "通讯看门狗超时(ms)"},
     {"name": "AXIS_JOG_VELOCITY", "data_type": "REAL", "value": "10.0", "comment": "点动速度"},
-    {"name": "ERRID_ESTOP", "data_type": "DINT", "value": "16#00000001", "comment": "急停故障位"}
+    {"name": "ERRID_ESTOP", "data_type": "DINT", "value": "16#00000001", "comment": "急停故障位"},
+    {"name": "ERRID_COMM", "data_type": "DINT", "value": "16#00000020", "comment": "通讯故障位"},
+    {"name": "ERRID_TIMEOUT", "data_type": "DINT", "value": "16#00000040", "comment": "超时故障位"}
   ]
 }

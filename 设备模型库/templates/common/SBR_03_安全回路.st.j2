@@ -3,12 +3,20 @@
    锁存/复位/许可/看门狗/三色灯
    ════════════════════════════════════════════════════════════════════ *)
 
-(* 急停锁存: 常闭取反 *)
+(* 急停: 常闭取反 (in_EStop=TRUE 表示急停释放) *)
 con_EstopPressed := NOT in_EStop;
 
-(* 故障锁存 FB_AlarmLatch *)
+(* 故障锁存: 动作超时 (细则2: 检测结果必须接入锁存闭环) *)
+(* 检测源 con_TimeoutReq 由 SBR_06 超时检测置位, 滞后一拍在此经 FB_AlarmLatch 锁存 *)
+Latch_Timeout(FaultIn := con_TimeoutReq, Reset := con_AlarmReset, Latched => con_TimeoutAlarm);
+IF con_TimeoutAlarm THEN
+    con_ErrorID := con_ErrorID OR ERRID_TIMEOUT;      (* bit6: 超时故障位 *)
+ELSE
+    con_ErrorID := con_ErrorID AND NOT ERRID_TIMEOUT; (* 复位后跟随锁存清除 *)
+END_IF;
+con_ErrorBit := con_ErrorID <> 0;
 
-(* 通讯看门狗 *)
+(* 通讯看门狗: con_CommLost 由 SBR_host 检测置位 (此处仅消费联锁) *)
 
 (* 运行许可: 急停OK 且 无故障 且 通讯正常 *)
 con_RunOK := in_EStop AND NOT con_ErrorBit AND NOT con_CommLost;

@@ -36,3 +36,16 @@
 - **观察项**：SBR_07 调用仅传 PowerEnable/Execute/Position，Velocity/Acceleration/Deceleration 未传（R3b 要求 14 命令全传）；host_Send_*_Start 为 INT 与 BOOL 做 AND 依赖隐式转换；demo_seq spec 缺 ERRID_TIMEOUT 常量与其他 spec 不一致。
 - **修复建议（待确认后实施，未擅改仓库）**：①FB_EtherCAT_Axis_ST 增 Timeout(DINT) 输入 + Expired(BOOL) 输出（R_TRIG 捕获 Execute 上升沿起 TON，Done/CommandAborted 复位）；②host_driven 每轴配 FB_CmdHandshake+TON 实例，Expired→con_TimeoutAlarm；③internal_seq 步机加"启动限时未见 Done"超时转移；④SBR_03 用 FB_AlarmLatch 锁存→ErrorID|=ERRID_TIMEOUT→ErrorBit→RunOK 联锁。
 - **遗留**：是否实施修复方案待用户/仓库维护方确认；NewProject 不在本次范围。
+
+
+## 2026-09-04 任务#11修复实施: 定位指令超时判定 (ZCode 编排器执行)
+
+- **任务**: 按 worklog 2026-08-14 任务#11 修复建议①~④实施, 设备模型库模板层修复后全量重新生成三工程。
+- **实施**:
+  1. FB_EtherCAT_Axis_ST 增 Timeout(DINT)输入 + Absolute_Expired(BOOL)输出: TON 内部监视, Absolute_Execute 启动沿清并起计时, Done/CommandAborted 复位, 限时未完成置 Expired; FB 变量表同步 5 行; SBR_07 调用传 TIMEOUT_AXIS_MOVE(常量由声明变实引用)。
+  2. host_driven SBR_06: 电平直驱改为每伺服 FB_CmdHandshake 握手锁存(Cmd=host_Send_*_Start=1 显式比较, 消 INT/BOOL 隐式转换), Done=状态机反馈, Timeout=TIMEOUT_CMD_HANDSHAKE, Abort=NOT con_AutoEnable; Expired→con_TimeoutReq; inst 表自动生成每轴 Handshake_* 行。
+  3. internal_seq SBR_06: 工步内 TONR 直调超时检测(IN=Execute AND NOT Done, PT=TIMEOUT_AXIS_MOVE, R=NOT Execute 防保持型 ET 累积误报), Q→con_TimeoutReq; 修正失实注释 TIMEOUT_STEPPER→TIMEOUT_AXIS_MOVE。
+  4. SBR_03: 空白占位改为 Latch_Timeout(FB_AlarmLatch) 锁存→con_TimeoutAlarm→ErrorID OR/AND NOT ERRID_TIMEOUT(跟随锁存清除)→ErrorBit→RunOK 联锁; inst 表全原型补 Latch_Timeout 行。
+  5. demo_seq.json 补齐 6 个缺失常量(与 virtual/seq 对齐); 新增 con 变量 con_TimeoutReq(D2020)/con_AlarmReset(D2021)/con_TimeoutQ(internal_seq 原型扩展, 地址顺延)。
+- **结论**: 三工程 generate.py 全过(review_st 无硬伤), verify_counts/verify_consistency OK, ci_check 错误 0; 表↔代码符号一致性由生成器保证。
+- **遗留**: con_AlarmReset 复位源需接本地/HMI 复位按钮; con_CommLost 看门狗检测在 SBR_host 仍待实施(本次范围外)。

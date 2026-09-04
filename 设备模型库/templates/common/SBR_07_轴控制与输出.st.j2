@@ -8,6 +8,7 @@
 {{ s.fb_instance }}(Axis := {{ s.axis_handle }}, PowerEnable := {{ s.cmd_struct }}.PowerEnable,
     Absolute_Execute := {{ s.cmd_struct }}.Absolute_Execute,
     Absolute_Position := {{ s.cmd_struct }}.Absolute_Position,
+    Timeout := TIMEOUT_AXIS_MOVE,
     Absolute_MoveAbsoluteDone => {{ s.status_struct }}.MoveAbsolute.Done,
     AxisStatusData => {{ s.status_struct }});
 {%- endfor %}
