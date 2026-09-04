@@ -5,7 +5,8 @@ collab-relay 多 Agent 实时协作中心 (纯标准库, 零依赖)
 提供 4 个通道:
   1. 消息    /msg         (@定向/广播, 长轮询 25s 准实时)
   2. 状态    /status      (心跳 60s 判离线)
-  3. 任务    /task        (open -> claim -> done, 认领互斥)
+  3. 任务    /task        (open -> claim -> done -> 编排器 review, 认领互斥;
+                          驳回自动回 open 重做)
   4. git 代理 /git/push, /git/sync  (解决 DSH 推送阻塞)
 
 启动: python relay_server.py [--port 8790] [--db collab.db]
@@ -57,12 +58,17 @@ class DB:
                 title TEXT NOT NULL,
                 detail TEXT DEFAULT '',
                 assignee TEXT DEFAULT '',
+                role TEXT DEFAULT '',       -- 任务角色: 生成/审查/测试 等, 空=任意 agent 可认领
                 state TEXT DEFAULT 'open',  -- open/claimed/done
                 claimed_by TEXT DEFAULT '',
                 created_at INTEGER NOT NULL,
                 claimed_at INTEGER DEFAULT 0,
                 done_at INTEGER DEFAULT 0,
-                result TEXT DEFAULT ''
+                result TEXT DEFAULT '',
+                review TEXT DEFAULT '',         -- ''/approved/rejected (编排器验收)
+                review_note TEXT DEFAULT '',
+                reviewed_by TEXT DEFAULT '',
+                reviewed_at INTEGER DEFAULT 0
             );
             CREATE TABLE IF NOT EXISTS git_events(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,6 +78,15 @@ class DB:
                 action TEXT NOT NULL
             );
             ''')
+            # 旧库迁移: 补齐 v1.1 新增列 (幂等)
+            existing = {r[1] for r in self.conn.execute('PRAGMA table_info(tasks)').fetchall()}
+            for col, ddl in [('role', 'TEXT DEFAULT ""'),
+                             ('review', 'TEXT DEFAULT ""'),
+                             ('review_note', 'TEXT DEFAULT ""'),
+                             ('reviewed_by', 'TEXT DEFAULT ""'),
+                             ('reviewed_at', 'INTEGER DEFAULT 0')]:
+                if col not in existing:
+                    self.conn.execute(f'ALTER TABLE tasks ADD COLUMN {col} {ddl}')
             self.conn.commit()
 
     def insert_msg(self, sender, receiver, topic, body):
@@ -117,11 +132,11 @@ class DB:
                         'heartbeat': r[5], 'online': online})
         return out
 
-    def create_task(self, title, detail, assignee):
+    def create_task(self, title, detail, assignee, role=''):
         with self.lock:
             cur = self.conn.execute(
-                'INSERT INTO tasks(title,detail,assignee,state,created_at) VALUES(?,?,?,?,?)',
-                (title, detail, assignee or '', 'open', now()))
+                'INSERT INTO tasks(title,detail,assignee,role,state,created_at) VALUES(?,?,?,?,?,?)',
+                (title, detail, assignee or '', role or '', 'open', now()))
             self.conn.commit()
             return cur.lastrowid
 
@@ -155,16 +170,38 @@ class DB:
             self.conn.commit()
             return 'ok'
 
+    def review_task(self, tid, agent, approved, note):
+        """编排器验收: approved=通过归档; rejected=打回重做(回 open, 保留驳回意见)"""
+        with self.lock:
+            row = self.conn.execute(
+                'SELECT state FROM tasks WHERE id=?', (tid,)).fetchone()
+            if not row:
+                return 'not_found'
+            if row[0] != 'done':
+                return 'not_done:' + row[0]
+            new_state = 'done' if approved else 'open'
+            self.conn.execute(
+                'UPDATE tasks SET state=?,review=?,review_note=?,reviewed_by=?,reviewed_at=? '
+                'WHERE id=?',
+                (new_state, 'approved' if approved else 'rejected', note or '',
+                 agent or '', now(), tid))
+            self.conn.commit()
+            return 'ok' if approved else 'rejected'
+
     def tasks(self, state=None):
+        cols = ('id,title,detail,assignee,role,state,claimed_by,created_at,'
+                'claimed_at,done_at,result,review,review_note,reviewed_by,reviewed_at')
         with self.lock:
             if state:
                 rows = self.conn.execute(
-                    'SELECT * FROM tasks WHERE state=? ORDER BY id DESC', (state,)).fetchall()
+                    f'SELECT {cols} FROM tasks WHERE state=? ORDER BY id DESC', (state,)).fetchall()
             else:
-                rows = self.conn.execute('SELECT * FROM tasks ORDER BY id DESC').fetchall()
+                rows = self.conn.execute(f'SELECT {cols} FROM tasks ORDER BY id DESC').fetchall()
         return [{'id': r[0], 'title': r[1], 'detail': r[2], 'assignee': r[3],
-                 'state': r[4], 'claimed_by': r[5], 'created_at': r[6],
-                 'claimed_at': r[7], 'done_at': r[8], 'result': r[9]} for r in rows]
+                 'role': r[4], 'state': r[5], 'claimed_by': r[6], 'created_at': r[7],
+                 'claimed_at': r[8], 'done_at': r[9], 'result': r[10],
+                 'review': r[11], 'review_note': r[12],
+                 'reviewed_by': r[13], 'reviewed_at': r[14]} for r in rows]
 
     def add_git_event(self, action, agent, commit):
         with self.lock:
@@ -256,7 +293,8 @@ class Handler(BaseHTTPRequestHandler):
             title = b.get('title', '')
             if not title:
                 return self._send(400, {'error': 'title required'})
-            tid = self.db.create_task(title, b.get('detail', ''), b.get('assignee', ''))
+            tid = self.db.create_task(title, b.get('detail', ''), b.get('assignee', ''),
+                                      b.get('role', ''))
             return self._send(200, {'task_id': tid})
         if p.path == '/task/claim':
             tid = b.get('task_id')
@@ -270,6 +308,14 @@ class Handler(BaseHTTPRequestHandler):
             if tid is None:
                 return self._send(400, {'error': 'task_id required'})
             return self._send(200, {'result': self.db.done_task(int(tid), agent, b.get('result', ''))})
+        if p.path == '/task/review':
+            # 编排器验收: {task_id, agent, approved, note}; 驳回则任务回 open 可重做
+            tid = b.get('task_id')
+            if tid is None:
+                return self._send(400, {'error': 'task_id required'})
+            result = self.db.review_task(int(tid), b.get('agent', ''),
+                                         bool(b.get('approved')), b.get('note', ''))
+            return self._send(200, {'result': result})
         if p.path == '/git/push':
             # push 代理: 由 git_sync.py 侧实际执行, 这里记录事件
             self.db.add_git_event('push_request', b.get('agent', ''), b.get('commit', ''))

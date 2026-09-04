@@ -55,7 +55,7 @@ def append_inbox(inbox, text):
 
 class Daemon:
     def __init__(self, relay, agent, mode, interval, inbox,
-                 run_cmd, task_timeout, status_name, workdir):
+                 run_cmd, task_timeout, status_name, workdir, roles=''):
         self.relay = relay
         self.agent = agent
         self.mode = mode
@@ -65,6 +65,8 @@ class Daemon:
         self.task_timeout = task_timeout
         self.status_name = status_name or f'{agent}-daemon'
         self.workdir = workdir or REPO
+        # 可认领的任务角色集合 (逗号分隔); 空=不挑角色 (role 为空的任务总能认领)
+        self.roles = {r.strip().lower() for r in roles.split(',') if r.strip()}
         self.last_seq = 0
         self.busy = False
         self.last_beat = 0
@@ -104,7 +106,9 @@ class Daemon:
         except Exception:
             return
         mine = [t for t in tasks
-                if t['assignee'] in ('', self.agent) or t['assignee'].lower() == self.agent.lower()]
+                if (t['assignee'] in ('', self.agent) or t['assignee'].lower() == self.agent.lower())
+                and (not self.roles or not t.get('role')
+                     or t['role'].lower() in self.roles)]
         if not mine:
             return
         task = mine[0]
@@ -125,8 +129,12 @@ class Daemon:
         self.status('busy', task=f"#{task['id']} {task['title']}")
         try:
             prompt = (f"协作任务 #{task['id']}: {task['title']}\n"
-                      f"详情: {task.get('detail','')}\n"
-                      f"请执行并汇报结果(简短)。遵守仓库 AGENTS.md 规则。")
+                      f"详情: {task.get('detail','')}\n")
+            # 编排器驳回的任务: 附上驳回意见, 要求针对性返工
+            if task.get('review') == 'rejected' and task.get('review_note'):
+                prompt += (f"上一轮结果被编排器驳回, 意见: {task['review_note']}\n"
+                           f"请针对性返工。\n")
+            prompt += "请执行并汇报结果(简短)。遵守仓库 AGENTS.md 规则。"
             done, out = self._run(prompt)
             result = out[-400:] if len(out) > 400 else out
             _req(self.relay, 'POST', '/task/done',
@@ -197,9 +205,11 @@ def main():
     ap.add_argument('--run-cmd', default='opencode', help='auto 模式执行命令 (支持 {} 占位)')
     ap.add_argument('--task-timeout', type=int, default=600, help='任务执行超时秒')
     ap.add_argument('--workdir', default='', help='任务执行工作目录 (默认仓库根)')
+    ap.add_argument('--roles', default='', help='可认领的任务角色 (逗号分隔, 空=不限)')
     args = ap.parse_args()
     Daemon(args.relay, args.agent, args.mode, args.interval, args.inbox,
-           args.run_cmd, args.task_timeout, args.status_name, args.workdir).run()
+           args.run_cmd, args.task_timeout, args.status_name, args.workdir,
+           args.roles).run()
 
 
 if __name__ == '__main__':

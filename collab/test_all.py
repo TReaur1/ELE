@@ -87,6 +87,31 @@ def main():
         t = r['tasks'][0]
         check('任务状态 done', t['state'] == 'done' and t['result'] == '已修复', json.dumps(t, ensure_ascii=False))
 
+        print('=== 3.5 编排器验收通道 (v1.1) ===')
+        r = req('POST', '/task/review', {'task_id': tid, 'agent': 'ZCode', 'approved': False,
+                                         'note': '类型修复不完整, SBR_06 仍有 BOOL:=0'})
+        check('编排器驳回', r.get('result') == 'rejected', str(r))
+        r = req('GET', '/task?state=open')
+        t = [x for x in r['tasks'] if x['id'] == tid][0]
+        check('驳回后任务回 open 且带驳回意见',
+              t['state'] == 'open' and t['review'] == 'rejected' and 'SBR_06' in t['review_note']
+              and t['reviewed_by'] == 'ZCode', json.dumps(t, ensure_ascii=False)[:200])
+        r = req('POST', '/task/claim', {'task_id': tid, 'agent': 'DSH'})
+        check('驳回任务可重新认领', r.get('result') == 'ok', str(r))
+        req('POST', '/task/done', {'task_id': tid, 'agent': 'DSH', 'result': '返工完成'})
+        r = req('POST', '/task/review', {'task_id': tid, 'agent': 'ZCode', 'approved': True, 'note': '通过'})
+        check('编排器验收通过', r.get('result') == 'ok', str(r))
+        r = req('GET', '/task')
+        t = [x for x in r['tasks'] if x['id'] == tid][0]
+        check('验收通过归档', t['state'] == 'done' and t['review'] == 'approved', json.dumps(t, ensure_ascii=False)[:200])
+        r = req('POST', '/task/review', {'task_id': tid, 'agent': 'ZCode', 'approved': True})
+        check('重复验收幂等', r.get('result') == 'ok', str(r))
+        r = req('POST', '/task', {'title': '生成SBR_07接线表', 'role': '生成', 'assignee': 'opencode'})
+        tid2 = r.get('task_id')
+        r = req('GET', '/task')
+        t = [x for x in r['tasks'] if x['id'] == tid2][0]
+        check('建任务带 role', t.get('role') == '生成', json.dumps(t, ensure_ascii=False)[:200])
+
         print('=== 4. git 代理 ===')
         r = req('POST', '/git/push', {'agent': 'DSH', 'commit': 'abc123'})
         check('git/push 记录', r.get('result') == 'recorded', str(r))

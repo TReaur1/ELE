@@ -10,9 +10,10 @@ Tools:
   get_messages     拉取消息 (长轮询准实时)
   report_status    上报状态 (心跳)
   get_status_board 查看所有 agent 状态
-  create_task      创建任务
+  create_task      创建任务 (可指定 role: 生成/审查/测试)
   claim_task       认领任务 (互斥)
   complete_task    完成任务
+  review_task      编排器验收任务 (通过归档 / 驳回回 open 重做)
   get_tasks        任务列表
   git_push_proxy   请求 git 推送代理 (解决 DSH 推送阻塞)
   git_sync         请求 git 同步
@@ -92,7 +93,8 @@ TOOLS = [
             'properties': {
                 'title': {'type': 'string'},
                 'detail': {'type': 'string'},
-                'assignee': {'type': 'string', 'description': '建议执行者 agent 名'}
+                'assignee': {'type': 'string', 'description': '建议执行者 agent 名'},
+                'role': {'type': 'string', 'description': '任务角色: 生成/审查/测试, 空=不限'}
             },
             'required': ['title']
         }
@@ -120,6 +122,20 @@ TOOLS = [
                 'result': {'type': 'string', 'description': '完成说明'}
             },
             'required': ['task_id', 'agent']
+        }
+    },
+    {
+        'name': 'review_task',
+        'description': '编排器验收已完成任务: approved=true 归档; false 驳回(任务回 open, 附意见供返工)',
+        'inputSchema': {
+            'type': 'object',
+            'properties': {
+                'task_id': {'type': 'integer'},
+                'agent': {'type': 'string', 'description': '验收者(编排器) agent 名'},
+                'approved': {'type': 'boolean'},
+                'note': {'type': 'string', 'description': '验收意见/驳回原因'}
+            },
+            'required': ['task_id', 'agent', 'approved']
         }
     },
     {
@@ -176,12 +192,17 @@ def _call_tool(name, args):
         return _req('GET', '/status')
     if name == 'create_task':
         return _req('POST', '/task', {'title': a.get('title'), 'detail': a.get('detail', ''),
-                                      'assignee': a.get('assignee', '')})
+                                      'assignee': a.get('assignee', ''), 'role': a.get('role', '')})
     if name == 'claim_task':
         return _req('POST', '/task/claim', {'task_id': a.get('task_id'), 'agent': a.get('agent')})
     if name == 'complete_task':
         return _req('POST', '/task/done', {'task_id': a.get('task_id'), 'agent': a.get('agent'),
                                            'result': a.get('result', '')})
+    if name == 'review_task':
+        return _req('POST', '/task/review', {'task_id': a.get('task_id'),
+                                             'agent': a.get('agent'),
+                                             'approved': bool(a.get('approved')),
+                                             'note': a.get('note', '')})
     if name == 'get_tasks':
         state = a.get('state') or ''
         return _req('GET', '/task' + (f'?state={state}' if state else ''))

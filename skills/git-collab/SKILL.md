@@ -105,7 +105,21 @@ metadata:
 
 - **启动**：`python collab/start_relay.py` 常驻；`python collab/git_sync.py`（git 代理，可选）。
 - **接入**：harness MCP 配置注册 `python <repo>/collab/mcp_tools.py`（opencode 已注册）。
-- **工具**：post_message / get_messages / report_status / get_status_board / create_task / claim_task / complete_task / get_tasks / git_push_proxy / git_sync / collab_ping。
-- **协议**：详见 `实时协作协议.md`（消息格式、状态心跳 60s、任务认领互斥、git 代理流程）。
+- **工具**：post_message / get_messages / report_status / get_status_board / create_task / claim_task / complete_task / review_task / get_tasks / git_push_proxy / git_sync / collab_ping。
+- **协议**：详见 `实时协作协议.md`（消息格式、状态心跳 60s、任务认领互斥、编排器验收、git 代理流程）。
 - **用途**：会话中拉取消息、@定向协作、状态看板、任务认领防冲突；DSH 推送被网络阻塞时用 `git_push_proxy` 由本机代推。
 - **局限**：对话型 harness 为准实时（会话中主动拉取），非 7×24 后台；重要交接仍同步写 `CHANGELOG.md`。
+
+---
+
+## 七、编排者-执行者模式（v1.1，ZCode 任编排器）
+
+自 v1.1 起任务流转升级为 **编排者-执行者（Orchestrator-Workers）**：
+
+- **编排器**：`ZCode`。职责：接目标 → 拆解为带角色（生成/审查/测试）的子任务 → 派发（create_task 带 role/assignee）→ **验收结果**（review_task：approved 归档 / rejected 打回，任务自动回 `open` 并附驳回意见）→ 汇总交接。
+- **执行者**：各 agent（opencode/DSH/Trae 等）经 relay 认领任务执行。daemon 可用 `--roles 生成,测试` 只认领匹配角色的任务；被驳回的任务重做时提示词自动附编排器驳回意见。
+- **约定**：
+  - 执行者完成任务（complete_task）≠ 结束，**须经编排器 review_task 通过才算关闭**。
+  - 驳回后同一任务回 `open` 可被重新认领，`review_note` 含驳回原因，返工须针对性回应。
+  - 编排器本身也可作为执行者认领任务，此时验收由人工或其他 agent 交叉进行。
+  - 涉及 `main` 的合并仍走 PR + CI 门禁，编排器验收不替代代码审查门禁。

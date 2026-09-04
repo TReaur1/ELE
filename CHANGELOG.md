@@ -2,6 +2,15 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.6.0 — 2026-09-04
+
+- **协作结构升级为编排者-执行者模式（collab-relay v1.1），ZCode 任编排器**：
+  - relay：tasks 表新增 `role`（生成/审查/测试，空=不限）与验收字段（review/review_note/reviewed_by/reviewed_at），旧库 ALTER 幂等迁移；查询改显式列名（兼容新旧库列序差异）；新增 `POST /task/review` 编排器验收端点——approved 归档 / rejected 打回（任务自动回 open，保留驳回意见）。
+  - agent_daemon：新增 `--roles 逗号列表` 角色过滤（只认领匹配任务）；被驳回任务重新认领时执行提示词自动附 review_note 驳回意见，针对性返工。
+  - mcp_tools：新增 `review_task` 工具；create_task 支持 role；工具总数 12。
+  - 契约更新：`skills/git-collab/SKILL.md` 新增第七节（编排者-执行者模式）；`实时协作协议.md` 升 v1.1（任务生命周期含 review 环节，complete ≠ 关闭，须编排器验收；验收不替代 PR/CI 门禁）。
+  - 测试：test_all 新增 3.5 编排器验收段 8 项断言（驳回→回 open→重认领→返工→验收归档→幂等→role 字段），test_all / test_daemon / ci_check 全部通过。
+
 ## v1.5.0 — 2026-08-27
 
 - **新增点动控制（预留，暂不使用，全部注释掉）**：触摸屏点动辊筒(正/反转)、触摸屏点动气缸(升/降)、手动按钮点动辊筒。
