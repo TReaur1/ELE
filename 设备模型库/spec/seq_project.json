@@ -358,6 +358,13 @@
       "data_type": "INT",
       "d_addr": 42,
       "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_CommState",
+      "name_cn": "通讯健康",
+      "data_type": "INT",
+      "d_addr": 44,
+      "comment": "0=正常/1=降级(命令冻结)/2=断讯 细则18"
     }
   ],
   "io": [
@@ -701,6 +708,24 @@
       "data_type": "DINT",
       "value": "1000",
       "comment": "出向心跳周期(ms)"
+    },
+    {
+      "name": "COMMST_NORMAL",
+      "data_type": "INT",
+      "value": "0",
+      "comment": "通讯健康: 正常"
+    },
+    {
+      "name": "COMMST_DEGRADED",
+      "data_type": "INT",
+      "value": "1",
+      "comment": "通讯健康: 降级(命令冻结)"
+    },
+    {
+      "name": "COMMST_LOST",
+      "data_type": "INT",
+      "value": "2",
+      "comment": "通讯健康: 断讯"
     }
   ]
 }

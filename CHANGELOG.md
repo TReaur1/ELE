@@ -2,6 +2,21 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v2.0.0 — 2026-09-04
+
+- **架构审视修改（grill-me 七问决策定稿，P0~P2 全部清偿，架构级变更）**：
+  - **通讯层补位**：生成器新增 `SBR_host 通讯主站`（入向心跳三级看门狗 / 出向心跳 R 复位翻转自增 / 通讯恢复沿清防重放序号 / 急停命令注销：断使能+清命令记忆位）；主调度插序为 `io→安全→模式→host→手动→自动→轴→status`。
+  - **状态层补位**：新增 `SBR_status 状态呈现`，数据驱动回写最小集（host_Rcv_Alarm=TO_INT(con_AlarmWord)/Mode/Ready/CommState），每轴 Position/StateMachine 等寄存器标注"预留未回写"待工艺接入。
+  - **P0-① 命令竞态**：FB_CmdHandshake 内加 `bCmdActive` 门控——新命令沿屏蔽同拍旧 Done 误清，修连续定位丢命令。
+  - **P0-③ 序号失步**：con_CommLost 下降沿（F_TRIG 实例 r_CommLostF）清 con_LastCmdSeq=-1，防上位机重启序号回绕永久拒令。
+  - **P0-② 急停注销**：con_EstopActive(安全层置位) → SBR_host 伺服 PowerEnable=FALSE + 清 Absolute_Execute/Home/Jog*；SBR_05/06/internal 04 命令门控全线加急停拦截；握手 Abort 联动。
+  - **P1-⑥ 轴命令死路**：SBR_07 轴 FB 调用改为全 14 命令成员传参（R3b 完整通路）。
+  - **P1-⑦ 报警字统一**：生成器 con_ErrorID 改名 con_AlarmWord（与 AGENTS 六环/辊筒工程一致），ErrorBit 随之。
+  - **P2**：load_spec 新增细则17 超时分层校验（握手<2×轴超时告警）；`test_golden.py` golden 回归测试（三工程基准已铸，模板改动回归一目了然）；review_st 白名单补 R/TO_INT/SEL/MB_Master；README 增系统级网络安全建议（AP 白名单/VLAN/Modbus 明文警示）。
+  - **辊筒模板**：出向心跳 TONR 自翻转修复（无 R 复位会每扫描递增）——**母本辊筒工程同款写法待用户确认后修**。
+  - **AGENTS**：四模块定稿表补"生成器工程分层变体"注记（两类工程同构等价）。
+  - **验证**：三工程 generate 全过 / verify OK / ci_check 0 错误 / golden ALL PASS。实施中规避了注释内 `*)` 提前闭合陷阱（详见 worklog）。
+
 ## v1.10.0 — 2026-09-04
 
 - **新增 `工程模板_辊筒线/`：新架构（四模块 + 无线适应细则15~18）下的可复制工程模板**：

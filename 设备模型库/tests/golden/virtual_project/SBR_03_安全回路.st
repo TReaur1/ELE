@@ -1,0 +1,40 @@
+(* ════════════════════════════════════════════════════════════════════
+   SBR_03 安全回路 - virtual_project
+   锁存/复位/许可/看门狗/三色灯
+   ════════════════════════════════════════════════════════════════════ *)
+
+(* 急停: 常闭取反 (in_EStop=TRUE 表示急停释放) *)
+con_EstopPressed := NOT in_EStop;
+con_EstopActive := con_EstopPressed;   (* 急停活跃: SBR_host 注销块/命令门控消费 *)
+
+(* 故障锁存: 动作超时 (细则2: 检测结果必须接入锁存闭环) *)
+(* 检测源 con_TimeoutReq 由 SBR_06 超时检测置位, 滞后一拍在此经 FB_AlarmLatch 锁存 *)
+Latch_Timeout(FaultIn := con_TimeoutReq, Reset := con_AlarmReset, Latched => con_TimeoutAlarm);
+IF con_TimeoutAlarm THEN
+    con_AlarmWord := con_AlarmWord OR ERRID_TIMEOUT;      (* bit6: 超时故障位 *)
+ELSE
+    con_AlarmWord := con_AlarmWord AND NOT ERRID_TIMEOUT; (* 复位后跟随锁存清除 *)
+END_IF;
+con_ErrorBit := con_AlarmWord <> 0;
+
+(* ── 通讯看门狗 (细则9): 出向自增 + 入向三级降级 (无线上位机链路适应) ── *)
+(* 出向心跳: 独立寄存器周期自增示存活, 禁止回显入向 (否则看门狗失效) *)
+TONR(IN := TRUE, PT := HEART_PERIOD, R := con_HeartRst, Q => con_HeartQ);
+IF con_HeartQ THEN
+    con_Heart_Counter := con_Heart_Counter + 1;
+END_IF;
+con_HeartRst := con_HeartQ;
+host_Send_Heart := con_Heart_Counter;
+(* 入向看门狗: 心跳变化判在线。
+   降级(WATCHDOG_DEGRADED): 冻结新命令受理, 已锁存动作继续完成 (容忍无线漫游/抖动);
+   失联(WATCHDOG_TIMEOUT): con_CommLost -> RunOK=0 -> 显式安全切断 *)
+TONR(IN := host_Rcv_Heart = con_Heart_Prev, PT := WATCHDOG_DEGRADED,
+    R := host_Rcv_Heart <> con_Heart_Prev, Q => con_CommDegraded);
+TONR(IN := host_Rcv_Heart = con_Heart_Prev, PT := WATCHDOG_TIMEOUT,
+    R := host_Rcv_Heart <> con_Heart_Prev, Q => con_CommLost);
+con_Heart_Prev := host_Rcv_Heart;
+
+(* 运行许可: 急停OK 且 无故障 且 通讯正常 (降级不杀许可, 仅冻结新命令) *)
+con_RunOK := in_EStop AND NOT con_ErrorBit AND NOT con_CommLost;
+
+(* 三色灯 FB_TowerLight *)

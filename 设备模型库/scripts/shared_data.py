@@ -98,6 +98,7 @@ FBS = {
         ('VAR', 'bLatched', 'BOOL', '锁存状态'),
         ('VAR', 'bExpired', 'BOOL', '超时锁存'),
         ('VAR', 'bAborted', 'BOOL', '中止锁存'),
+        ('VAR', 'bCmdActive', 'BOOL', '命令活跃(屏蔽同拍旧Done误清 竞态修复)'),
         ('VAR', 'r_Cmd', 'TRIG.R_TRIG', '命令边沿检测'),
         ('VAR', 'ton_Timeout', 'TON', '超时定时器'),
     ],
@@ -200,9 +201,9 @@ FBS = {
 # con 内部控制变量 (name, type, address, 注释) — 通用
 CON_VARS = [
     ('con_EstopPressed', 'BOOL', 'D2000', '急停按下标志(常闭取反)'),
-    ('con_Heart_Counter', 'INT', 'D2001', '心跳记忆值(看门狗)'),
+    ('con_Heart_Counter', 'INT', 'D2001', '出向心跳计数值(周期自增 上报host_Send_Heart)'),
     ('con_CommLost', 'BOOL', 'D2002', '通讯丢失标志'),
-    ('con_ErrorID', 'DINT', 'D2003', '故障位编码(bit0~bit9)'),
+    ('con_AlarmWord', 'DINT', 'D2003', '报警字位编码(bit0~bit15 上报须TO_INT 命名与AGENTS六环统一)'),
     ('con_ErrorBit', 'BOOL', 'D2004', '总故障位'),
     ('con_RunOK', 'BOOL', 'D2005', '运行许可(急停OK且无故障且通讯正常)'),
     ('con_AllHomed', 'BOOL', 'D2006', '4轴全部回零完成'),
@@ -226,6 +227,7 @@ CON_VARS = [
     ('con_LastCmdSeq', 'INT', 'D2024', '上次受理命令序号(防无线重放)'),
     ('con_HeartQ', 'BOOL', 'D2025', '出向心跳周期到标志(TONR直调Q)'),
     ('con_HeartRst', 'BOOL', 'D2026', '出向心跳定时器复位脉冲'),
+    ('con_EstopActive', 'BOOL', 'D2027', '急停活跃(安全层置位 SBR_host注销块/命令门控消费)'),
 ]
 
 # 按原型追加的变量 (自动生成, 不进 JSON 规格单)

@@ -30,7 +30,8 @@ KEYWORDS = {
     'END_REPEAT', 'RETURN', 'TRUE', 'FALSE', 'AND', 'OR', 'NOT', 'XOR', 'END_FUNCTION_BLOCK',
     'BOOL', 'INT', 'DINT', 'REAL', 'BYTE', 'WORD', 'STRING', 'LREAL', 'SINT', 'LINT',
     '_sMCAXIS_INFO', '_sMCAXIS_CONFIG', '_sMCAXIS_STATE',
-    'TON', 'TOF', 'TONR', 'R_TRIG', 'TRIG', 'IN', 'OUT', 'INOUT', 'Q', 'ET', 'PT', 'CLK', 'M',
+    'TON', 'TOF', 'TONR', 'R_TRIG', 'TRIG', 'IN', 'OUT', 'INOUT', 'Q', 'ET', 'PT', 'CLK', 'M', 'R',
+    'TO_INT', 'TO_REAL', 'SEL', 'MAX', 'MIN', 'LIMIT', 'MB_Master',
 }
 # 厂商 MC_* 功能块名 (作为类型, 出现在 `fb : MC_Power` 声明中)
 MC_FBS = {'MC_Power', 'MC_Reset', 'MC_Stop', 'MC_Home', 'MC_JOG', 'MC_MoveAbsolute',

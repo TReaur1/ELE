@@ -5,16 +5,17 @@
 
 (* 急停: 常闭取反 (in_EStop=TRUE 表示急停释放) *)
 con_EstopPressed := NOT in_EStop;
+con_EstopActive := con_EstopPressed;   (* 急停活跃: SBR_host 注销块/命令门控消费 *)
 
 (* 故障锁存: 动作超时 (细则2: 检测结果必须接入锁存闭环) *)
 (* 检测源 con_TimeoutReq 由 SBR_06 超时检测置位, 滞后一拍在此经 FB_AlarmLatch 锁存 *)
 Latch_Timeout(FaultIn := con_TimeoutReq, Reset := con_AlarmReset, Latched => con_TimeoutAlarm);
 IF con_TimeoutAlarm THEN
-    con_ErrorID := con_ErrorID OR ERRID_TIMEOUT;      (* bit6: 超时故障位 *)
+    con_AlarmWord := con_AlarmWord OR ERRID_TIMEOUT;      (* bit6: 超时故障位 *)
 ELSE
-    con_ErrorID := con_ErrorID AND NOT ERRID_TIMEOUT; (* 复位后跟随锁存清除 *)
+    con_AlarmWord := con_AlarmWord AND NOT ERRID_TIMEOUT; (* 复位后跟随锁存清除 *)
 END_IF;
-con_ErrorBit := con_ErrorID <> 0;
+con_ErrorBit := con_AlarmWord <> 0;
 
 (* ── 通讯看门狗 (细则9): 出向自增 + 入向三级降级 (无线上位机链路适应) ── *)
 (* 出向心跳: 独立寄存器周期自增示存活, 禁止回显入向 (否则看门狗失效) *)

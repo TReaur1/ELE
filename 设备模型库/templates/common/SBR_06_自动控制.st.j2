@@ -9,7 +9,7 @@
 Handshake_{{ s.eng_name }}(Cmd := (host_Send_{{ s.eng_name }}_Start = 1)
     AND (host_Send_CmdSeq <> con_LastCmdSeq) AND NOT con_CommDegraded,
     Done := {{ s.status_struct }}.MoveAbsolute.Done, Timeout := TIMEOUT_CMD_HANDSHAKE,
-    Abort := NOT con_AutoEnable);
+    Abort := (NOT con_AutoEnable) OR con_EstopActive);
 {{ s.cmd_struct }}.Absolute_Execute := con_AutoEnable AND Handshake_{{ s.eng_name }}.Latched;
 IF Handshake_{{ s.eng_name }}.Expired THEN
     con_TimeoutReq := TRUE;           (* 命令超时 -> SBR_03 锁存报警 *)

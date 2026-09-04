@@ -66,3 +66,25 @@
 - **要点**: 三级看门狗/防重放序号/恢复沿清记忆/降级冻结/报警字bit3/通讯三态上报/速度档常量化;
   复制指引含上位机侧配套协议(序号递增/心跳/回执以实际状态为准)。
 - **自查**: ci_check 0 错误(模板零警告); 新符号 ST↔表配对确认; GBK/UTF8 编码保持。
+
+
+## 2026-09-04 v2.0.0 架构审视修改 (grill-me 决策定稿)
+
+- **决策(grill-me 拷问 7 问收敛)**: 范围 P0~P2 全部; 通讯层=生成器新增 SBR_host+SBR_status 两块(方案A);
+  Done 竞态=FB 内 bCmdActive 门控; 急停注销语义=断使能+清记忆; 状态层=最小集四项回写(每轴寄存器标"预留未回写");
+  报警字统一到 con_AlarmWord; 版本 v2.0.0 单提交。
+- **实施**:
+  1. FB_CmdHandshake 加 bCmdActive(新命令沿屏蔽同拍旧Done) —— 修连续定位丢命令竞态;
+  2. 生成器新增 SBR_host(三级看门狗/出向心跳R复位翻转/恢复沿清序号/急停注销断使能) 与
+     SBR_status(数据驱动回写 Alarm TO_INT/Mode/Ready/CommState, 每轴寄存器预留);
+  3. 主调度插序 io→安全→模式→host→手动→自动→轴→status; SBR_06 握手 Abort+EstopActive;
+     internal_seq 04/05 命令加急停门控; SBR_07 轴 FB 全14命令传参(R3b 死路打通);
+  4. con_ErrorID 改名 con_AlarmWord(与AGENTS六环/辊筒统一); 新 con: con_EstopActive(D2027);
+  5. P2: load_spec 加细则17超时分层校验(握手<2x轴超时告警); test_golden.py golden 回归(三工程基准已铸);
+     ci_check 排除 tests/golden; README 加系统级网络安全建议;
+  6. 辊筒模板出向心跳自翻转修复(TONR 无 R 复位会每扫描递增 —— 母本同款写法待用户确认后修);
+  7. review_st 白名单补 R/TO_INT/SEL/MB_Master 等;
+- **实施中修的坑**: SBR_host 注释内 "WATCHDOG_*)" 的 *) 提前闭合块注释(知识文档十一节陷阱的实例),
+  导致 R1 误报 10 中文 + 符号泄漏 —— 改写注释规避。
+- **验证**: 三工程 generate 全过; verify_counts/consistency OK; ci_check 0 错误; golden ALL PASS。
+- **待人工/其他 agent 交叉验收**: relay 任务(编排器自执行)。

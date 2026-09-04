@@ -41,10 +41,12 @@ def walk():
             ext = os.path.splitext(f)[1].lower()
             if ext in SKIP_SUFFIXES:
                 continue
-            # 排除生成物目录: 路径含 /output/ 或 设备模型库/output
+            # 排除生成物目录: 路径含 /output/ 或 /golden/ (生成物副本, 编码/规则与源码不同)
             full = os.path.join(dirparts, f)
             norm = full.replace(os.sep, '/')
             if norm.endswith('/output') or '/output/' in norm:
+                continue
+            if '/golden/' in norm or '/tests/golden' in norm:
                 continue
             yield full, ext
 

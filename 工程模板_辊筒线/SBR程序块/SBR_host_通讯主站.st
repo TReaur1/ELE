@@ -46,9 +46,12 @@ IF r_CommLostF.Q THEN
     con_LastCmdSeq := -1;      (* -1=任意序号均可受理 *)
 END_IF;
 
-(* ═══ 段2 出向心跳: TONR 直调 IN取反自翻转 每 COMM_HEART_TICK 计数+1 ═══ *)
-TONR(IN := NOT con_HeartTickQ,
+(* ═══ 段2 出向心跳: TONR 直调 周期自增 (R 复位翻转 每周期一扫描脉冲) ═══
+      v2.0.0 修复: TONR 为保持型, 原自翻转写法无 R 复位, ET 保持后
+      下个周期会立即再置 Q 导致每扫描递增; 现以 Q 作 R 每周期显式复位。 *)
+TONR(IN := TRUE,
      PT := COMM_HEART_TICK,
+     R  := con_HeartTickQ,
      Q  => con_HeartTickQ);
 IF con_HeartTickQ THEN
     con_HeartOut := con_HeartOut + 1;

@@ -1,40 +1,40 @@
-(* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   SBR_01 é€šç”¨ FB åº“ - {{ project.name }}
-   ç»Ÿä¸€å°è£…å¯å¤ç”¨åŠŸèƒ½å—, ç¦æ­¢åœ¨ç¨‹åºä¸­å¤åˆ¶ç²˜è´´é€»è¾‘
-   7 ä¸ªé€šç”¨ FB + FB_EtherCAT_Axis_ST (è½´æ§, R3b)
-   FB æ¥å£/å†…éƒ¨å˜é‡å¯¹åº” FB\FbTable_*.csv (ç±»åˆ« IN/OUT/INOUT/VAR)
-   å®šæ—¶ç”¨ TON, è¾¹æ²¿ç”¨ TRIG.R_TRIG, æ—¶é—´å‚æ•° DINT(ms)
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• *)
+(* ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+   SBR_01 Í¨ÓÃ FB ¿â - virtual_project
+   Í³Ò»·â×°¿É¸´ÓÃ¹¦ÄÜ¿é, ½ûÖ¹ÔÚ³ÌĞòÖĞ¸´ÖÆÕ³ÌùÂß¼­
+   7 ¸öÍ¨ÓÃ FB + FB_EtherCAT_Axis_ST (Öá¿Ø, R3b)
+   FB ½Ó¿Ú/ÄÚ²¿±äÁ¿¶ÔÓ¦ FB\FbTable_*.csv (Àà±ğ IN/OUT/INOUT/VAR)
+   ¶¨Ê±ÓÃ TON, ±ßÑØÓÃ TRIG.R_TRIG, Ê±¼ä²ÎÊı DINT(ms)
+   ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T *)
 
 
-(* â”€â”€ FB1 è¾“å…¥æ»¤æ³¢: æ›¿ä»£ TONR è£¸ç”¨ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB1 ÊäÈëÂË²¨: Ìæ´ú TONR ÂãÓÃ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_Debounce
 VAR_INPUT
-    RawIn       : BOOL;     (* åŸå§‹è¾“å…¥ä¿¡å· *)
-    FilterTime  : DINT;     (* æ»¤æ³¢æ—¶é—´(ms) *)
+    RawIn       : BOOL;     (* Ô­Ê¼ÊäÈëĞÅºÅ *)
+    FilterTime  : DINT;     (* ÂË²¨Ê±¼ä(ms) *)
 END_VAR
 VAR_OUTPUT
-    FilteredOut : BOOL;     (* æ»¤æ³¢åè¾“å‡º *)
+    FilteredOut : BOOL;     (* ÂË²¨ºóÊä³ö *)
 END_VAR
 VAR
-    ton_Filter  : TON;      (* æ»¤æ³¢å®šæ—¶å™¨ *)
+    ton_Filter  : TON;      (* ÂË²¨¶¨Ê±Æ÷ *)
 END_VAR
 ton_Filter(IN := RawIn, PT := FilterTime);
 FilteredOut := ton_Filter.Q;
 
 
-(* â”€â”€ FB2 æ•…éšœé”å­˜: è¾¹æ²¿ç½®ä½, æ•…éšœæ¶ˆé™¤+å¤ä½æ‰æ¸…é™¤ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB2 ¹ÊÕÏËø´æ: ±ßÑØÖÃÎ», ¹ÊÕÏÏû³ı+¸´Î»²ÅÇå³ı ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_AlarmLatch
 VAR_INPUT
-    FaultIn  : BOOL;        (* æ•…éšœæºè¾“å…¥ *)
-    Reset    : BOOL;        (* å¤ä½å‘½ä»¤(ä¸Šå‡æ²¿) *)
+    FaultIn  : BOOL;        (* ¹ÊÕÏÔ´ÊäÈë *)
+    Reset    : BOOL;        (* ¸´Î»ÃüÁî(ÉÏÉıÑØ) *)
 END_VAR
 VAR_OUTPUT
-    Latched  : BOOL;        (* æ•…éšœé”å­˜è¾“å‡º *)
+    Latched  : BOOL;        (* ¹ÊÕÏËø´æÊä³ö *)
 END_VAR
 VAR
-    bLatched : BOOL;        (* é”å­˜çŠ¶æ€ *)
-    r_Fault  : TRIG.R_TRIG; (* æ•…éšœè¾¹æ²¿æ£€æµ‹ *)
+    bLatched : BOOL;        (* Ëø´æ×´Ì¬ *)
+    r_Fault  : TRIG.R_TRIG; (* ¹ÊÕÏ±ßÑØ¼ì²â *)
 END_VAR
 r_Fault(CLK := FaultIn);
 IF r_Fault.Q THEN
@@ -46,26 +46,26 @@ END_IF;
 Latched := bLatched;
 
 
-(* â”€â”€ FB3 å‘½ä»¤æ¡æ‰‹: è¾¹æ²¿é”å­˜, å®Œæˆ/è¶…æ—¶/ä¸­æ­¢å¤ä½ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB3 ÃüÁîÎÕÊÖ: ±ßÑØËø´æ, Íê³É/³¬Ê±/ÖĞÖ¹¸´Î» ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_CmdHandshake
 VAR_INPUT
-    Cmd     : BOOL;         (* å‘½ä»¤è¾“å…¥(ä¸Šå‡æ²¿) *)
-    Done    : BOOL;         (* å®Œæˆåé¦ˆ *)
-    Timeout : DINT;         (* è¶…æ—¶æ—¶é—´(ms) *)
-    Abort   : BOOL;         (* ä¸­æ­¢å‘½ä»¤ *)
+    Cmd     : BOOL;         (* ÃüÁîÊäÈë(ÉÏÉıÑØ) *)
+    Done    : BOOL;         (* Íê³É·´À¡ *)
+    Timeout : DINT;         (* ³¬Ê±Ê±¼ä(ms) *)
+    Abort   : BOOL;         (* ÖĞÖ¹ÃüÁî *)
 END_VAR
 VAR_OUTPUT
-    Latched : BOOL;         (* å‘½ä»¤å·²é”å­˜ *)
-    Busy    : BOOL;         (* å‘½ä»¤æ‰§è¡Œä¸­ *)
-    Expired : BOOL;         (* è¶…æ—¶æ ‡å¿— *)
-    Aborted : BOOL;         (* å·²ä¸­æ­¢æ ‡å¿— *)
+    Latched : BOOL;         (* ÃüÁîÒÑËø´æ *)
+    Busy    : BOOL;         (* ÃüÁîÖ´ĞĞÖĞ *)
+    Expired : BOOL;         (* ³¬Ê±±êÖ¾ *)
+    Aborted : BOOL;         (* ÒÑÖĞÖ¹±êÖ¾ *)
 END_VAR
 VAR
     bLatched    : BOOL;
     bExpired    : BOOL;
     bAborted    : BOOL;
-    bCmdActive  : BOOL;     (* å‘½ä»¤æ´»è·ƒ: æ–°å‘½ä»¤æ²¿ç½®ä½, Doneç¡®è®¤/ä¸­æ­¢/è¶…æ—¶æ¸…é™¤
-                               å±è”½åŒæ‹æ—§å‘½ä»¤æ®‹ç•™Doneè¯¯æ¸…æ–°å‘½ä»¤ (v2.0.0 ç«æ€ä¿®å¤) *)
+    bCmdActive  : BOOL;     (* ÃüÁî»îÔ¾: ĞÂÃüÁîÑØÖÃÎ», DoneÈ·ÈÏ/ÖĞÖ¹/³¬Ê±Çå³ı
+                               ÆÁ±ÎÍ¬ÅÄ¾ÉÃüÁî²ĞÁôDoneÎóÇåĞÂÃüÁî (v2.0.0 ¾ºÌ¬ĞŞ¸´) *)
     r_Cmd       : TRIG.R_TRIG;
     ton_Timeout : TON;
 END_VAR
@@ -96,18 +96,18 @@ Expired := bExpired;
 Aborted := bAborted;
 
 
-(* â”€â”€ FB4 å®šæ—¶åŠ¨ä½œ: è¾¹æ²¿å¯åŠ¨, å®šæ—¶/åˆ°ä½/é™ä½ç»ˆæ­¢ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB4 ¶¨Ê±¶¯×÷: ±ßÑØÆô¶¯, ¶¨Ê±/µ½Î»/ÏŞÎ»ÖÕÖ¹ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_TimedAction
 VAR_INPUT
-    Start  : BOOL;          (* å¯åŠ¨è¾“å…¥(ä¸Šå‡æ²¿) *)
-    Time   : DINT;          (* åŠ¨ä½œæ—¶é•¿(ms) *)
-    InPos  : BOOL;          (* åˆ°ä½ä¿¡å· *)
-    Limit  : BOOL;          (* é™ä½ä¿¡å· *)
+    Start  : BOOL;          (* Æô¶¯ÊäÈë(ÉÏÉıÑØ) *)
+    Time   : DINT;          (* ¶¯×÷Ê±³¤(ms) *)
+    InPos  : BOOL;          (* µ½Î»ĞÅºÅ *)
+    Limit  : BOOL;          (* ÏŞÎ»ĞÅºÅ *)
 END_VAR
 VAR_OUTPUT
-    Running    : BOOL;      (* åŠ¨ä½œæ‰§è¡Œä¸­ *)
-    Done       : BOOL;      (* åŠ¨ä½œå®Œæˆ *)
-    Terminated : BOOL;      (* é™ä½ç»ˆæ­¢ *)
+    Running    : BOOL;      (* ¶¯×÷Ö´ĞĞÖĞ *)
+    Done       : BOOL;      (* ¶¯×÷Íê³É *)
+    Terminated : BOOL;      (* ÏŞÎ»ÖÕÖ¹ *)
 END_VAR
 VAR
     bRunning : BOOL;
@@ -134,23 +134,23 @@ END_IF;
 Running := bRunning;
 
 
-(* â”€â”€ FB5 æ­¥è¿›é©±åŠ¨: æ‰‹åŠ¨+è‡ªåŠ¨åˆå¹¶, æ­£åè½¬äº’é”, å¤ä½/åœæ­¢è¾“å‡º â”€â”€â”€â”€ *)
+(* ©¤©¤ FB5 ²½½øÇı¶¯: ÊÖ¶¯+×Ô¶¯ºÏ²¢, Õı·´×ª»¥Ëø, ¸´Î»/Í£Ö¹Êä³ö ©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_StepperDrive
 VAR_INPUT
-    ManForward  : BOOL;     (* æ‰‹åŠ¨æ­£å‘ *)
-    ManBackward : BOOL;     (* æ‰‹åŠ¨åå‘ *)
-    AutoForward : BOOL;     (* è‡ªåŠ¨æ­£å‘ *)
-    AutoBackward: BOOL;     (* è‡ªåŠ¨åå‘ *)
-    Reset       : BOOL;     (* æ•…éšœå¤ä½ *)
-    Stop        : BOOL;     (* åœæ­¢ *)
-    Enable      : BOOL;     (* è¿è¡Œè®¸å¯ *)
+    ManForward  : BOOL;     (* ÊÖ¶¯ÕıÏò *)
+    ManBackward : BOOL;     (* ÊÖ¶¯·´Ïò *)
+    AutoForward : BOOL;     (* ×Ô¶¯ÕıÏò *)
+    AutoBackward: BOOL;     (* ×Ô¶¯·´Ïò *)
+    Reset       : BOOL;     (* ¹ÊÕÏ¸´Î» *)
+    Stop        : BOOL;     (* Í£Ö¹ *)
+    Enable      : BOOL;     (* ÔËĞĞĞí¿É *)
 END_VAR
 VAR_OUTPUT
-    Forward  : BOOL;        (* æ­£å‘è¾“å‡º *)
-    Backward : BOOL;        (* åå‘è¾“å‡º *)
-    Busy     : BOOL;        (* è¿è¡Œä¸­ *)
-    Done     : BOOL;        (* å®Œæˆ *)
-    Error    : BOOL;        (* æ•…éšœ *)
+    Forward  : BOOL;        (* ÕıÏòÊä³ö *)
+    Backward : BOOL;        (* ·´ÏòÊä³ö *)
+    Busy     : BOOL;        (* ÔËĞĞÖĞ *)
+    Done     : BOOL;        (* Íê³É *)
+    Error    : BOOL;        (* ¹ÊÕÏ *)
 END_VAR
 VAR
     bForward  : BOOL;
@@ -180,20 +180,20 @@ Done     := NOT (bForward OR bBackward);
 Error    := bError;
 
 
-(* â”€â”€ FB6 ç”µè¾Šç­’: æ–¹å‘/é€Ÿåº¦æ¡£åˆå¹¶, ä¸‰æ¡£ 50/75/100% â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB6 µç¹õÍ²: ·½Ïò/ËÙ¶ÈµµºÏ²¢, Èıµµ 50/75/100% ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_Roller
 VAR_INPUT
-    RunFwd     : BOOL;      (* æ­£è½¬å¯åŠ¨ *)
-    RunRev     : BOOL;      (* åè½¬å¯åŠ¨ *)
-    SpeedLevel : INT;       (* é€Ÿåº¦æ¡£(1/2/3) *)
-    SpeedLow   : INT;       (* ä½é€Ÿæ¡£(%) *)
-    SpeedMid   : INT;       (* ä¸­é€Ÿæ¡£(%) *)
-    SpeedHigh  : INT;       (* é«˜é€Ÿæ¡£(%) *)
+    RunFwd     : BOOL;      (* Õı×ªÆô¶¯ *)
+    RunRev     : BOOL;      (* ·´×ªÆô¶¯ *)
+    SpeedLevel : INT;       (* ËÙ¶Èµµ(1/2/3) *)
+    SpeedLow   : INT;       (* µÍËÙµµ(%) *)
+    SpeedMid   : INT;       (* ÖĞËÙµµ(%) *)
+    SpeedHigh  : INT;       (* ¸ßËÙµµ(%) *)
 END_VAR
 VAR_OUTPUT
-    A     : BOOL;           (* æ–¹å‘Aè¾“å‡º *)
-    B     : BOOL;           (* æ–¹å‘Bè¾“å‡º *)
-    Speed : INT;            (* é€Ÿåº¦å€¼(%) *)
+    A     : BOOL;           (* ·½ÏòAÊä³ö *)
+    B     : BOOL;           (* ·½ÏòBÊä³ö *)
+    Speed : INT;            (* ËÙ¶ÈÖµ(%) *)
 END_VAR
 VAR
     bFwd : BOOL;
@@ -220,19 +220,19 @@ ELSE
 END_CASE;
 
 
-(* â”€â”€ FB7 ä¸‰è‰²ç¯: ä¼˜å…ˆçº§ æ•…éšœ > è‡ªåŠ¨ > æ‰‹åŠ¨ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB7 ÈıÉ«µÆ: ÓÅÏÈ¼¶ ¹ÊÕÏ > ×Ô¶¯ > ÊÖ¶¯ ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_TowerLight
 VAR_INPUT
-    Fault  : BOOL;          (* æ•…éšœçŠ¶æ€ *)
-    Auto   : BOOL;          (* è‡ªåŠ¨æ¨¡å¼ *)
-    Manual : BOOL;          (* æ‰‹åŠ¨æ¨¡å¼ *)
-    RunOK  : BOOL;          (* è¿è¡Œè®¸å¯ *)
+    Fault  : BOOL;          (* ¹ÊÕÏ×´Ì¬ *)
+    Auto   : BOOL;          (* ×Ô¶¯Ä£Ê½ *)
+    Manual : BOOL;          (* ÊÖ¶¯Ä£Ê½ *)
+    RunOK  : BOOL;          (* ÔËĞĞĞí¿É *)
 END_VAR
 VAR_OUTPUT
-    Red    : BOOL;          (* çº¢ç¯ *)
-    Yellow : BOOL;          (* é»„ç¯ *)
-    Green  : BOOL;          (* ç»¿ç¯ *)
-    Buzzer : BOOL;          (* èœ‚é¸£å™¨ *)
+    Red    : BOOL;          (* ºìµÆ *)
+    Yellow : BOOL;          (* »ÆµÆ *)
+    Green  : BOOL;          (* ÂÌµÆ *)
+    Buzzer : BOOL;          (* ·äÃùÆ÷ *)
 END_VAR
 IF Fault THEN
     Red := TRUE; Yellow := FALSE; Green := FALSE; Buzzer := TRUE;
@@ -245,10 +245,10 @@ ELSE
 END_IF;
 
 
-(* â”€â”€ FB8 è½´æ§ FB_EtherCAT_Axis_ST: å°è£… MC_* (R3b) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ *)
+(* ©¤©¤ FB8 Öá¿Ø FB_EtherCAT_Axis_ST: ·â×° MC_* (R3b) ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ *)
 FUNCTION_BLOCK FB_EtherCAT_Axis_ST
 VAR_IN_OUT
-    Axis : _sMCAXIS_INFO;   (* è½´å¥æŸ„ *)
+    Axis : _sMCAXIS_INFO;   (* Öá¾ä±ú *)
 END_VAR
 VAR_INPUT
     PowerEnable            : BOOL;
@@ -265,12 +265,12 @@ VAR_INPUT
     Absolute_Velocity      : REAL;
     Absolute_Acceleration  : REAL;
     Absolute_Deceleration  : REAL;
-    Timeout                : DINT;     (* å®šä½è¶…æ—¶æ—¶é—´(ms), 0=ä¸å¯ç”¨ *)
+    Timeout                : DINT;     (* ¶¨Î»³¬Ê±Ê±¼ä(ms), 0=²»ÆôÓÃ *)
 END_VAR
 VAR_OUTPUT
     AxisStatusData          : AxisStatusData;
     Absolute_MoveAbsoluteDone : BOOL;
-    Absolute_Expired        : BOOL;   (* ç»å¯¹å®šä½è¶…æ—¶åˆ°æœŸ *)
+    Absolute_Expired        : BOOL;   (* ¾ø¶Ô¶¨Î»³¬Ê±µ½ÆÚ *)
 END_VAR
 VAR
     fb_Power        : MC_Power;
@@ -321,7 +321,7 @@ fb_MoveAbsolute(Axis := Axis, Execute := Absolute_Execute, Position := Absolute_
     CommandAborted => AxisStatusData.MoveAbsolute.CommandAborted,
     Error => AxisStatusData.MoveAbsolute.Error, ErrorID => AxisStatusData.MoveAbsolute.ErrorID);
 Absolute_MoveAbsoluteDone := AxisStatusData.MoveAbsolute.Done;
-(* å®šä½è¶…æ—¶ç›‘è§† (ç»†åˆ™11): å¯åŠ¨æ²¿èµ·è®¡æ—¶, Done/CommandAborted å¤ä½, é™æ—¶æœªå®Œæˆç½® Expired *)
+(* ¶¨Î»³¬Ê±¼àÊÓ (Ï¸Ôò11): Æô¶¯ÑØÆğ¼ÆÊ±, Done/CommandAborted ¸´Î», ÏŞÊ±Î´Íê³ÉÖÃ Expired *)
 r_AbsStart(CLK := Absolute_Execute);
 IF r_AbsStart.Q THEN
     bAbsTiming := TRUE;

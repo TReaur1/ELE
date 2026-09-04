@@ -5,8 +5,8 @@
 {%- for s in actuators.servos %}
 
 (* {{ s.name_cn }} Jog: {{ s.cmd_struct }} *)
-{{ s.cmd_struct }}.JogForward := con_ManualEnable AND hmi_JogP_M{{ s.idx }};
-{{ s.cmd_struct }}.JogBackward := con_ManualEnable AND hmi_JogN_M{{ s.idx }};
+{{ s.cmd_struct }}.JogForward := con_ManualEnable AND NOT con_EstopActive AND hmi_JogP_M{{ s.idx }};
+{{ s.cmd_struct }}.JogBackward := con_ManualEnable AND NOT con_EstopActive AND hmi_JogN_M{{ s.idx }};
 {%- endfor %}
 {%- for sp in actuators.steppers %}
 

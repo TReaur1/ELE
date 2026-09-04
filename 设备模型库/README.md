@@ -106,3 +106,12 @@ python scripts\verify_consistency.py   # 检查 ST 引用变量是否都在表�
 - 新增共享 FB/结构体/con 变量 → 编辑 `scripts\shared_data.py`
 - 新增原型 → `templates\archetype\<name>\` 放 SBR_04/05/06 模板 + `shared_data.py` 的 `ARCHETYPE_EXTRA` 加变量
 - 修改模板 → `templates\common\*.j2` 或 `templates\archetype\*\*.j2`
+
+
+## 系统级网络安全建议（无线上位机链路, 2026-09-04）
+
+PLC 侧已实现失联安全（三级看门狗 → RunOK 联锁），但无线段本身建议同步加固：
+
+- **AP 侧**：MAC 白名单 / WPA2-Enterprise；上位机与 PLC 划独立 VLAN，与办公网隔离。
+- **协议**：Modbus TCP 为明文无鉴权，禁止跨网段暴露 502 端口；跨网段时经工业网关/VPN。
+- **上位机**：命令下发前先校验 `host_Rcv_CommState`（降级/断讯时置灰命令）；以回执/实际状态为执行依据（细则16）。

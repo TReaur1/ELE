@@ -81,7 +81,8 @@ def main(project=None):
                 'SBR_02_IO映射.st.j2', 'SBR_03_安全回路.st.j2',
                 'SBR_04_模式管理.st.j2', 'SBR_05_手动控制.st.j2',
                 'SBR_06_自动控制.st.j2', 'SBR_07_轴控制与输出.st.j2',
-                'SBR_08_主调度.st.j2']:
+                'SBR_08_主调度.st.j2', 'SBR_host_通讯主站.st.j2',
+                'SBR_status_状态呈现.st.j2']:
         if resolve_template(env, ctx, sbr) is not None:
             render(ctx, env, sbr, out_dir)
     con.close()

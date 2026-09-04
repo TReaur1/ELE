@@ -203,6 +203,11 @@ def gen_inst_table(con, out_dir, project):
     n = 1
     # 报警锁存实例 (SBR_03 故障锁存闭环, 全原型必配, 细则2)
     rows.append('%d,Latch_Timeout,FB_AlarmLatch,,,,' % n); n += 1
+    # 通讯恢复沿 (SBR_host 段3 清防重放序号记忆, 细则15)
+    rows.append('%d,r_CommLostF,TRIG.F_TRIG,,,,' % n); n += 1
+    rows.append(',r_CommLostF.CLK,BOOL,,,,')
+    rows.append(',r_CommLostF.Q,BOOL,,,,')
+    rows.append(',r_CommLostF.M,BOOL,,,,')
     for r in con.execute('SELECT fb_instance, eng_name FROM actuator WHERE project_id=? AND kind="servo" ORDER BY idx', (pid,)):
         fb, eng = r
         rows.append('%d,%s,FB_EtherCAT_Axis_ST,,,,' % (n, fb)); n += 1

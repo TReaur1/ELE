@@ -14,9 +14,9 @@ con_Mode_Prev   := con_AutoEnable OR con_ManualEnable;
 (* 自动子态 (非标准工艺, 人工按需调整): 回零/单步/连续 *)
 (* 无线适应: 启动/回零命令经防重放序号门控 + 降级冻结; 停止命令永不拦截 *)
 con_Step_Init := con_AutoEnable AND host_Send_Home AND (host_Send_CmdSeq <> con_LastCmdSeq)
-    AND NOT con_CommDegraded AND NOT con_StepRun;
+    AND NOT con_CommDegraded AND NOT con_EstopActive AND NOT con_StepRun;
 con_Start     := con_AutoEnable AND host_Send_Start AND (host_Send_CmdSeq <> con_LastCmdSeq)
-    AND NOT con_CommDegraded AND NOT con_StepRun;
+    AND NOT con_CommDegraded AND NOT con_EstopActive AND NOT con_StepRun;
 con_Stop      := NOT con_AutoEnable OR host_Send_Stop;
 IF con_Start OR con_Step_Init THEN
     con_LastCmdSeq := host_Send_CmdSeq;   (* 受理即记忆序号, 同序号重发不二次触发 *)

@@ -96,6 +96,15 @@ def load(spec_path):
             cur.execute('INSERT INTO position_table(project_id, axis_idx, pos_no, position) VALUES (?,?,?,?)',
                         (pid, int(axis_idx), i, float(p)))
 
+    # 细则17 超时分层校验: 通讯域握手超时须 >= 2x 设备域定位超时
+    cvals = {c['name']: c for c in spec.get('constants', [])}
+    if 'TIMEOUT_CMD_HANDSHAKE' in cvals and 'TIMEOUT_AXIS_MOVE' in cvals:
+        try:
+            hs, mv = int(cvals['TIMEOUT_CMD_HANDSHAKE']['value']), int(cvals['TIMEOUT_AXIS_MOVE']['value'])
+            if hs < 2 * mv:
+                print('[warn] 细则17: TIMEOUT_CMD_HANDSHAKE(%d) 应 >= 2x TIMEOUT_AXIS_MOVE(%d) (通讯域含网络最坏延迟)' % (hs, mv))
+        except ValueError:
+            pass
     for c in spec.get('constants', []):
         check_r1(c['name'], '常量')
         cur.execute('INSERT INTO const_item(project_id, name, data_type, value, comment) VALUES (?,?,?,?,?)',
