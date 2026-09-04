@@ -1,0 +1,10 @@
+编号,位,报警标识符,汉字文本,类型,恢复条件,
+1,bit0,ERRID_ESTOP,急停按下,锁存,急停释放+复位边沿
+2,bit1,ERRID_RESERVE1,预留(bit1),-,
+3,bit2,ERRID_RESERVE2,预留(bit2),-,
+4,bit3,ERRID_RESERVE3,预留(bit3),-,
+5,bit4,ERRID_RESERVE4,预留(bit4),-,
+6,bit5,ERRID_COMM,通讯断讯,随动,心跳恢复自动解除
+7,bit6,ERRID_TIMEOUT,定位超时,锁存,故障源消除+复位命令
+,bit7~15,ERRID_RESERVE,预留(扩展位),-,
+,-,con_AlarmIndex=0,无报警,-,-

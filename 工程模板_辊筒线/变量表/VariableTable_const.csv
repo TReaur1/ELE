@@ -11,3 +11,7 @@
 10,ROLLER_SPEED_LOW,INT,,100,TRUE,,辊筒低速档(% 常量化禁魔法数字),,
 11,ROLLER_SPEED_MID,INT,,75,TRUE,,辊筒中速档(%),,
 12,ROLLER_SPEED_HIGH,INT,,50,TRUE,,辊筒高速档(%),,
+13,ALMIDX_ESTOP,INT,,1,TRUE,,报警编号: 急停锁存(bit0+1),,
+14,ALMIDX_CYL,INT,,2,TRUE,,报警编号: 气缸超时(bit1+1),,
+15,ALMIDX_COMM,INT,,3,TRUE,,报警编号: 通讯断讯(bit2+1),,
+16,ALMIDX_DEGRADED,INT,,4,TRUE,,报警编号: 通讯降级(bit3+1),,

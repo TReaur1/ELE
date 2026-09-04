@@ -778,6 +778,24 @@
       "data_type": "INT",
       "value": "2",
       "comment": "通讯健康: 断讯"
+    },
+    {
+      "name": "ERRIDX_ESTOP",
+      "data_type": "INT",
+      "value": "1",
+      "comment": "报警编号: 急停(bit0+1) HMI文本列表行"
+    },
+    {
+      "name": "ERRIDX_COMM",
+      "data_type": "INT",
+      "value": "6",
+      "comment": "报警编号: 断讯(bit5+1)"
+    },
+    {
+      "name": "ERRIDX_TIMEOUT",
+      "data_type": "INT",
+      "value": "7",
+      "comment": "报警编号: 超时(bit6+1)"
     }
   ]
 }

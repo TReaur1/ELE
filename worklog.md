@@ -88,3 +88,17 @@
   导致 R1 误报 10 中文 + 符号泄漏 —— 改写注释规避。
 - **验证**: 三工程 generate 全过; verify_counts/consistency OK; ci_check 0 错误; golden ALL PASS。
 - **待人工/其他 agent 交叉验收**: relay 任务(编排器自执行)。
+
+
+## 2026-09-04 报警汉字显示优化 (索引字+对照表, 路线B)
+
+- **决策(用户选定)**: 路线B——PLC 出报警索引字 con_AlarmIndex, 汉字文本唯一真源=仓库《报警对照表.csv》(GBK),
+  HMI"文本列表"控件按编号显示汉字, 报警历史控件仍按 con_AlarmWord 位映射; 生成器+辊筒模板双体系落地。
+- **实施**:
+  1. 生成器: SBR_status 加报警索引段(数据驱动, spec 有 ERRID_* 才渲染; 编号=活跃bit+1, 位序低者优先);
+     con 表加 con_AlarmIndex(D2028); 三 spec 加 ERRIDX_ESTOP/COMM/TIMEOUT(1/6/7);
+     设备模型库/报警对照表.csv(7行: bit0 急停~bit6 超时)。
+  2. 辊筒模板: SBR_status 段0 索引段(2#位掩码判定, ALMIDX_ 常量编号); con 表 con_AlarmIndex;
+     const 表 ALMIDX_* 4行; 报警对照表.csv(急停/气缸超时/断讯/降级); 00_说明 加"三点五 HMI组态指引"。
+- **自查**: 修正一处笔误(bit0 掩码误写 2#0001_0 → 2#0001); ci_check 0 错误; golden ALL PASS。
+- **HMI 侧待办(组态)**: 文本列表控件绑定 con_AlarmIndex, 按 对照表 行录入汉字; 报警控件按位映射。

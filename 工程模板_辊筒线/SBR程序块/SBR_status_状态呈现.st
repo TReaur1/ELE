@@ -11,6 +11,24 @@
    报警指示不受许可门控: 报警必须可见 (细则1)
    ════════════════════════════════════════════════════════════════════ *)
 
+(* ═══ 段0 报警索引: 当前最高优先级活跃报警编号 (0=无) ═══
+   编号 = 活跃报警位序 + 1; 多报警同发时编号小者(位序低=严重度高)优先显示。
+   触摸屏"文本列表"控件绑定 con_AlarmIndex 按编号显示汉字, 对照见 报警对照表.csv;
+   HMI 报警历史/列表控件仍按 con_AlarmWord 位映射组态。 *)
+con_AlarmIndex := 0;
+IF (con_AlarmWord AND 2#1000) <> 0 THEN
+    con_AlarmIndex := ALMIDX_DEGRADED;   (* bit3 通讯降级 *)
+END_IF;
+IF (con_AlarmWord AND 2#0010) <> 0 THEN
+    con_AlarmIndex := ALMIDX_COMM;       (* bit2 通讯断讯 *)
+END_IF;
+IF (con_AlarmWord AND 2#0001) <> 0 THEN
+    con_AlarmIndex := ALMIDX_CYL;        (* bit1 气缸超时 *)
+END_IF;
+IF (con_AlarmWord AND 2#0001) <> 0 THEN
+    con_AlarmIndex := ALMIDX_ESTOP;      (* bit0 急停锁存 最优先 *)
+END_IF;
+
 (* ═══ 段1 三色灯蜂鸣 FB: 优先级 故障 > 自动 > 手动 ═══ *)
 Tower_1(Fault      := Latch_Estop.AlarmOut OR Latch_Cyl.AlarmOut OR con_CommLost,
         Auto       := bModeAuto,

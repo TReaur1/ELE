@@ -228,6 +228,7 @@ CON_VARS = [
     ('con_HeartQ', 'BOOL', 'D2025', '出向心跳周期到标志(TONR直调Q)'),
     ('con_HeartRst', 'BOOL', 'D2026', '出向心跳定时器复位脉冲'),
     ('con_EstopActive', 'BOOL', 'D2027', '急停活跃(安全层置位 SBR_host注销块/命令门控消费)'),
+    ('con_AlarmIndex', 'INT', 'D2028', '当前报警编号(最低活跃bit+1 0=无 触摸屏文本列表按此显示汉字 见报警对照表)'),
 ]
 
 # 按原型追加的变量 (自动生成, 不进 JSON 规格单)

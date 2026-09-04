@@ -33,3 +33,4 @@
 32,dwRtuErrID,DINT,,0,FALSE,FALSE,MB_Master错误码,,
 33,con_CommDegraded,BOOL,FALSE,,FALSE,FALSE,通讯降级(心跳静默超降级阈值 冻结新命令 动作继续 细则18),,
 34,con_LastCmdSeq,INT,,-1,FALSE,FALSE,上次受理命令序号(初值-1=任意可受理 防无线重放 细则15; 通讯恢复沿清-1),,
+35,con_AlarmIndex,INT,,0,FALSE,FALSE,当前报警编号(最低活跃bit+1 0=无 触摸屏文本列表绑定 见报警对照表),,
