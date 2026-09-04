@@ -1,11 +1,13 @@
 (* ════════════════════════════════════════════════════════════════════
    SBR_06 自动控制 - {{ project.name }} (原型: {{ project.archetype }})
-   上位机命令解析: 握手锁存 / 位置查表 / 超时监视 / 状态反馈
+   上位机命令解析: 防重放 / 握手锁存 / 位置查表 / 超时监视 / 命令回执
+   无线链路适应: 降级冻结新命令, 已锁存动作继续完成 (SBR_03 判定 con_CommDegraded)
    ════════════════════════════════════════════════════════════════════ *)
 {%- for s in actuators.servos %}
 
-(* {{ s.name_cn }} 自动定位: host 命令握手 (细则3, 禁电平直驱) + 位置查表 *)
-Handshake_{{ s.eng_name }}(Cmd := host_Send_{{ s.eng_name }}_Start = 1,
+(* {{ s.name_cn }} 自动定位: 防重放序号门控 + host 命令握手 (细则3, 禁电平直驱) + 位置查表 *)
+Handshake_{{ s.eng_name }}(Cmd := (host_Send_{{ s.eng_name }}_Start = 1)
+    AND (host_Send_CmdSeq <> con_LastCmdSeq) AND NOT con_CommDegraded,
     Done := {{ s.status_struct }}.MoveAbsolute.Done, Timeout := TIMEOUT_CMD_HANDSHAKE,
     Abort := NOT con_AutoEnable);
 {{ s.cmd_struct }}.Absolute_Execute := con_AutoEnable AND Handshake_{{ s.eng_name }}.Latched;
@@ -21,5 +23,24 @@ ELSE
 END_CASE;
 {%- endfor %}
 
-(* 状态反馈 host_Rcv_* *)
-host_Rcv_Heart := host_Send_Heart;
+(* 防重放: 任一命令被受理后记忆序号, 同序号重发不再触发 (无线网络会重发/乱序) *)
+{%- for s in actuators.servos %}
+{%- if loop.first %}
+IF Handshake_{{ s.eng_name }}.Latched{% else %} OR Handshake_{{ s.eng_name }}.Latched{% endif %}
+{%- endfor %} THEN
+    con_LastCmdSeq := host_Send_CmdSeq;
+END_IF;
+
+(* 命令回执状态字 (CMDST_: 0空闲/2执行中/3完成/4超时, 超时保持至下条命令):
+   上位机在收到回执前不得认为命令已生效, 也不得以"发送成功"作为执行依据 *)
+{%- for s in actuators.servos %}
+IF Handshake_{{ s.eng_name }}.Expired THEN
+    host_Rcv_{{ s.eng_name }}_CmdState := CMDST_EXPIRED;
+ELSIF Handshake_{{ s.eng_name }}.Latched THEN
+    host_Rcv_{{ s.eng_name }}_CmdState := CMDST_EXEC;
+ELSIF {{ s.status_struct }}.MoveAbsolute.Done THEN
+    host_Rcv_{{ s.eng_name }}_CmdState := CMDST_DONE;
+ELSE
+    host_Rcv_{{ s.eng_name }}_CmdState := CMDST_IDLE;
+END_IF;
+{%- endfor %}

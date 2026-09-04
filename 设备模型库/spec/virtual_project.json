@@ -7,125 +7,752 @@
     "base_dir": "output/virtual_project"
   },
   "actuators": [
-    {"kind": "servo", "name_cn": "横移", "eng_name": "Cross", "idx": 1,
-     "cmd_struct": "M1_Cross_Cmd", "status_struct": "M1_Cross_Status",
-     "fb_instance": "AxisControl_M1_Cross", "axis_handle": "Axis_M1_Cross"},
-    {"kind": "servo", "name_cn": "旋转", "eng_name": "Rot", "idx": 2,
-     "cmd_struct": "M2_Rot_Cmd", "status_struct": "M2_Rot_Status",
-     "fb_instance": "AxisControl_M2_Rot", "axis_handle": "Axis_M2_Rot"},
-    {"kind": "servo", "name_cn": "提升", "eng_name": "Lift", "idx": 3,
-     "cmd_struct": "M3_Lift_Cmd", "status_struct": "M3_Lift_Status",
-     "fb_instance": "AxisControl_M3_Lift", "axis_handle": "Axis_M3_Lift"},
-    {"kind": "servo", "name_cn": "对中", "eng_name": "Center", "idx": 4,
-     "cmd_struct": "M4_Center_Cmd", "status_struct": "M4_Center_Status",
-     "fb_instance": "AxisControl_M4_Center", "axis_handle": "Axis_M4_Center"},
-    {"kind": "stepper", "name_cn": "夹爪", "eng_name": "Gripper", "idx": 1,
-     "fb_instance": "Stepper_Gripper"},
-    {"kind": "stepper", "name_cn": "左阻挡", "eng_name": "LBlock", "idx": 2,
-     "fb_instance": "Stepper_LBlock"},
-    {"kind": "stepper", "name_cn": "右阻挡", "eng_name": "RBlock", "idx": 3,
-     "fb_instance": "Stepper_RBlock"},
-    {"kind": "roller", "name_cn": "电辊筒", "eng_name": "Roller", "idx": 1,
-     "fb_instance": "FB_ControlCard"}
+    {
+      "kind": "servo",
+      "name_cn": "横移",
+      "eng_name": "Cross",
+      "idx": 1,
+      "cmd_struct": "M1_Cross_Cmd",
+      "status_struct": "M1_Cross_Status",
+      "fb_instance": "AxisControl_M1_Cross",
+      "axis_handle": "Axis_M1_Cross"
+    },
+    {
+      "kind": "servo",
+      "name_cn": "旋转",
+      "eng_name": "Rot",
+      "idx": 2,
+      "cmd_struct": "M2_Rot_Cmd",
+      "status_struct": "M2_Rot_Status",
+      "fb_instance": "AxisControl_M2_Rot",
+      "axis_handle": "Axis_M2_Rot"
+    },
+    {
+      "kind": "servo",
+      "name_cn": "提升",
+      "eng_name": "Lift",
+      "idx": 3,
+      "cmd_struct": "M3_Lift_Cmd",
+      "status_struct": "M3_Lift_Status",
+      "fb_instance": "AxisControl_M3_Lift",
+      "axis_handle": "Axis_M3_Lift"
+    },
+    {
+      "kind": "servo",
+      "name_cn": "对中",
+      "eng_name": "Center",
+      "idx": 4,
+      "cmd_struct": "M4_Center_Cmd",
+      "status_struct": "M4_Center_Status",
+      "fb_instance": "AxisControl_M4_Center",
+      "axis_handle": "Axis_M4_Center"
+    },
+    {
+      "kind": "stepper",
+      "name_cn": "夹爪",
+      "eng_name": "Gripper",
+      "idx": 1,
+      "fb_instance": "Stepper_Gripper"
+    },
+    {
+      "kind": "stepper",
+      "name_cn": "左阻挡",
+      "eng_name": "LBlock",
+      "idx": 2,
+      "fb_instance": "Stepper_LBlock"
+    },
+    {
+      "kind": "stepper",
+      "name_cn": "右阻挡",
+      "eng_name": "RBlock",
+      "idx": 3,
+      "fb_instance": "Stepper_RBlock"
+    },
+    {
+      "kind": "roller",
+      "name_cn": "电辊筒",
+      "eng_name": "Roller",
+      "idx": 1,
+      "fb_instance": "FB_ControlCard"
+    }
   ],
   "comm_write": [
-    {"var_name": "host_Send_Cross_PosNo", "name_cn": "横移位置号", "data_type": "INT", "d_addr": 0, "comment": "M1横移目标位置号(1~5),其他值无效"},
-    {"var_name": "host_Send_Cross_Start", "name_cn": "横移定位启动", "data_type": "INT", "d_addr": 1, "comment": "写完位置号后写1触发,读到到位后写0"},
-    {"var_name": "host_Send_Rot_PosNo", "name_cn": "旋转位置号", "data_type": "INT", "d_addr": 2, "comment": "M2旋转目标位置号(1~5)"},
-    {"var_name": "host_Send_Rot_Start", "name_cn": "旋转定位启动", "data_type": "INT", "d_addr": 3, "comment": "=1触发,到位后写0"},
-    {"var_name": "host_Send_Lift_PosNo", "name_cn": "提升位置号", "data_type": "INT", "d_addr": 4, "comment": "M3提升目标位置号(1~5)"},
-    {"var_name": "host_Send_Lift_Start", "name_cn": "提升定位启动", "data_type": "INT", "d_addr": 5, "comment": "=1触发"},
-    {"var_name": "host_Send_Center_PosNo", "name_cn": "对中位置号", "data_type": "INT", "d_addr": 6, "comment": "M4对中目标位置号(1~5)"},
-    {"var_name": "host_Send_Center_Start", "name_cn": "对中定位启动", "data_type": "INT", "d_addr": 7, "comment": "=1触发"},
-    {"var_name": "host_Send_Gripper_Fwd", "name_cn": "夹爪夹紧", "data_type": "INT", "d_addr": 8, "comment": "=1夹紧,读到正极限写0,与松开互斥"},
-    {"var_name": "host_Send_Gripper_Rev", "name_cn": "夹爪松开", "data_type": "INT", "d_addr": 9, "comment": "=1松开,读到负极限写0"},
-    {"var_name": "host_Send_LBlock_Up", "name_cn": "左阻挡上升", "data_type": "INT", "d_addr": 10, "comment": "=1上升,读到正极限写0"},
-    {"var_name": "host_Send_LBlock_Down", "name_cn": "左阻挡下降", "data_type": "INT", "d_addr": 11, "comment": "=1下降"},
-    {"var_name": "host_Send_RBlock_Up", "name_cn": "右阻挡上升", "data_type": "INT", "d_addr": 12, "comment": "=1上升"},
-    {"var_name": "host_Send_RBlock_Down", "name_cn": "右阻挡下降", "data_type": "INT", "d_addr": 13, "comment": "=1下降"},
-    {"var_name": "host_Send_Roller_Fwd", "name_cn": "辊筒正转", "data_type": "INT", "d_addr": 14, "comment": "=1正转(电平保持)"},
-    {"var_name": "host_Send_Roller_Rev", "name_cn": "辊筒反转", "data_type": "INT", "d_addr": 15, "comment": "=1反转(电平保持)"},
-    {"var_name": "host_Rcv_Heart", "name_cn": "入向心跳", "data_type": "INT", "d_addr": 16, "comment": "上位机→PLC,每秒+1,PLC检测变化判在线"}
+    {
+      "var_name": "host_Send_Cross_PosNo",
+      "name_cn": "横移位置号",
+      "data_type": "INT",
+      "d_addr": 0,
+      "comment": "M1横移目标位置号(1~5),其他值无效"
+    },
+    {
+      "var_name": "host_Send_Cross_Start",
+      "name_cn": "横移定位启动",
+      "data_type": "INT",
+      "d_addr": 1,
+      "comment": "写完位置号后写1触发,读到到位后写0"
+    },
+    {
+      "var_name": "host_Send_Rot_PosNo",
+      "name_cn": "旋转位置号",
+      "data_type": "INT",
+      "d_addr": 2,
+      "comment": "M2旋转目标位置号(1~5)"
+    },
+    {
+      "var_name": "host_Send_Rot_Start",
+      "name_cn": "旋转定位启动",
+      "data_type": "INT",
+      "d_addr": 3,
+      "comment": "=1触发,到位后写0"
+    },
+    {
+      "var_name": "host_Send_Lift_PosNo",
+      "name_cn": "提升位置号",
+      "data_type": "INT",
+      "d_addr": 4,
+      "comment": "M3提升目标位置号(1~5)"
+    },
+    {
+      "var_name": "host_Send_Lift_Start",
+      "name_cn": "提升定位启动",
+      "data_type": "INT",
+      "d_addr": 5,
+      "comment": "=1触发"
+    },
+    {
+      "var_name": "host_Send_Center_PosNo",
+      "name_cn": "对中位置号",
+      "data_type": "INT",
+      "d_addr": 6,
+      "comment": "M4对中目标位置号(1~5)"
+    },
+    {
+      "var_name": "host_Send_Center_Start",
+      "name_cn": "对中定位启动",
+      "data_type": "INT",
+      "d_addr": 7,
+      "comment": "=1触发"
+    },
+    {
+      "var_name": "host_Send_Gripper_Fwd",
+      "name_cn": "夹爪夹紧",
+      "data_type": "INT",
+      "d_addr": 8,
+      "comment": "=1夹紧,读到正极限写0,与松开互斥"
+    },
+    {
+      "var_name": "host_Send_Gripper_Rev",
+      "name_cn": "夹爪松开",
+      "data_type": "INT",
+      "d_addr": 9,
+      "comment": "=1松开,读到负极限写0"
+    },
+    {
+      "var_name": "host_Send_LBlock_Up",
+      "name_cn": "左阻挡上升",
+      "data_type": "INT",
+      "d_addr": 10,
+      "comment": "=1上升,读到正极限写0"
+    },
+    {
+      "var_name": "host_Send_LBlock_Down",
+      "name_cn": "左阻挡下降",
+      "data_type": "INT",
+      "d_addr": 11,
+      "comment": "=1下降"
+    },
+    {
+      "var_name": "host_Send_RBlock_Up",
+      "name_cn": "右阻挡上升",
+      "data_type": "INT",
+      "d_addr": 12,
+      "comment": "=1上升"
+    },
+    {
+      "var_name": "host_Send_RBlock_Down",
+      "name_cn": "右阻挡下降",
+      "data_type": "INT",
+      "d_addr": 13,
+      "comment": "=1下降"
+    },
+    {
+      "var_name": "host_Send_Roller_Fwd",
+      "name_cn": "辊筒正转",
+      "data_type": "INT",
+      "d_addr": 14,
+      "comment": "=1正转(电平保持)"
+    },
+    {
+      "var_name": "host_Send_Roller_Rev",
+      "name_cn": "辊筒反转",
+      "data_type": "INT",
+      "d_addr": 15,
+      "comment": "=1反转(电平保持)"
+    },
+    {
+      "var_name": "host_Rcv_Heart",
+      "name_cn": "入向心跳",
+      "data_type": "INT",
+      "d_addr": 16,
+      "comment": "上位机→PLC,每秒+1,PLC检测变化判在线"
+    },
+    {
+      "var_name": "host_Send_CmdSeq",
+      "name_cn": "命令序号",
+      "data_type": "INT",
+      "d_addr": 43,
+      "comment": "每次新命令+1,PLC比对序号防无线重放"
+    }
   ],
   "comm_read": [
-    {"var_name": "host_Send_Heart", "name_cn": "出向心跳", "data_type": "INT", "d_addr": 17, "comment": "PLC→上位机,每秒自增示存活"},
-    {"var_name": "host_Rcv_Alarm", "name_cn": "报警位编码", "data_type": "INT", "d_addr": 18, "comment": "故障位编码(bit0~bit9)"},
-    {"var_name": "host_Rcv_Mode", "name_cn": "运行模式", "data_type": "INT", "d_addr": 19, "comment": "0手动/1自动"},
-    {"var_name": "host_Rcv_Cross_StateMachine", "name_cn": "横移状态机", "data_type": "INT", "d_addr": 20, "comment": "正常状态为3(静止)"},
-    {"var_name": "host_Rcv_Rot_StateMachine", "name_cn": "旋转状态机", "data_type": "INT", "d_addr": 21, "comment": "正常状态为3"},
-    {"var_name": "host_Rcv_Lift_StateMachine", "name_cn": "提升状态机", "data_type": "INT", "d_addr": 22, "comment": "正常状态为3"},
-    {"var_name": "host_Rcv_Center_StateMachine", "name_cn": "对中状态机", "data_type": "INT", "d_addr": 23, "comment": "正常状态为3"},
-    {"var_name": "host_Rcv_Cross_Position", "name_cn": "横移实际位置", "data_type": "REAL", "d_addr": 24, "comment": "REAL占2地址(24-25)"},
-    {"var_name": "host_Rcv_Rot_Position", "name_cn": "旋转实际位置", "data_type": "REAL", "d_addr": 26, "comment": "REAL占2地址(26-27)"},
-    {"var_name": "host_Rcv_Lift_Position", "name_cn": "提升实际位置", "data_type": "REAL", "d_addr": 28, "comment": "REAL占2地址(28-29)"},
-    {"var_name": "host_Rcv_Center_Position", "name_cn": "对中实际位置", "data_type": "REAL", "d_addr": 30, "comment": "REAL占2地址(30-31)"},
-    {"var_name": "host_Rcv_Cross_MoveDone", "name_cn": "横移定位完成", "data_type": "INT", "d_addr": 32, "comment": "=1到位,启动信号清零后复位"},
-    {"var_name": "host_Rcv_Rot_MoveDone", "name_cn": "旋转定位完成", "data_type": "INT", "d_addr": 33, "comment": "=1到位"},
-    {"var_name": "host_Rcv_Lift_MoveDone", "name_cn": "提升定位完成", "data_type": "INT", "d_addr": 34, "comment": "=1到位"},
-    {"var_name": "host_Rcv_Center_MoveDone", "name_cn": "对中定位完成", "data_type": "INT", "d_addr": 35, "comment": "=1到位"},
-    {"var_name": "host_Rcv_Roller_Material", "name_cn": "辊筒物料检测", "data_type": "INT", "d_addr": 36, "comment": "有料1/无料0"},
-    {"var_name": "host_Rcv_Grip_LimitPos", "name_cn": "夹爪正限位", "data_type": "INT", "d_addr": 37, "comment": "触发1"},
-    {"var_name": "host_Rcv_Grip_LimitNeg", "name_cn": "夹爪负限位", "data_type": "INT", "d_addr": 38, "comment": "触发1"},
-    {"var_name": "host_Rcv_LBlock_LimitPos", "name_cn": "左阻挡正限位", "data_type": "INT", "d_addr": 39, "comment": "触发1"},
-    {"var_name": "host_Rcv_LBlock_LimitNeg", "name_cn": "左阻挡负限位", "data_type": "INT", "d_addr": 40, "comment": "触发1"},
-    {"var_name": "host_Rcv_RBlock_LimitPos", "name_cn": "右阻挡正限位", "data_type": "INT", "d_addr": 41, "comment": "触发1"},
-    {"var_name": "host_Rcv_RBlock_LimitNeg", "name_cn": "右阻挡负限位", "data_type": "INT", "d_addr": 42, "comment": "触发1"}
+    {
+      "var_name": "host_Send_Heart",
+      "name_cn": "出向心跳",
+      "data_type": "INT",
+      "d_addr": 17,
+      "comment": "PLC→上位机,每秒自增示存活"
+    },
+    {
+      "var_name": "host_Rcv_Alarm",
+      "name_cn": "报警位编码",
+      "data_type": "INT",
+      "d_addr": 18,
+      "comment": "故障位编码(bit0~bit9)"
+    },
+    {
+      "var_name": "host_Rcv_Mode",
+      "name_cn": "运行模式",
+      "data_type": "INT",
+      "d_addr": 19,
+      "comment": "0手动/1自动"
+    },
+    {
+      "var_name": "host_Rcv_Cross_StateMachine",
+      "name_cn": "横移状态机",
+      "data_type": "INT",
+      "d_addr": 20,
+      "comment": "正常状态为3(静止)"
+    },
+    {
+      "var_name": "host_Rcv_Rot_StateMachine",
+      "name_cn": "旋转状态机",
+      "data_type": "INT",
+      "d_addr": 21,
+      "comment": "正常状态为3"
+    },
+    {
+      "var_name": "host_Rcv_Lift_StateMachine",
+      "name_cn": "提升状态机",
+      "data_type": "INT",
+      "d_addr": 22,
+      "comment": "正常状态为3"
+    },
+    {
+      "var_name": "host_Rcv_Center_StateMachine",
+      "name_cn": "对中状态机",
+      "data_type": "INT",
+      "d_addr": 23,
+      "comment": "正常状态为3"
+    },
+    {
+      "var_name": "host_Rcv_Cross_Position",
+      "name_cn": "横移实际位置",
+      "data_type": "REAL",
+      "d_addr": 24,
+      "comment": "REAL占2地址(24-25)"
+    },
+    {
+      "var_name": "host_Rcv_Rot_Position",
+      "name_cn": "旋转实际位置",
+      "data_type": "REAL",
+      "d_addr": 26,
+      "comment": "REAL占2地址(26-27)"
+    },
+    {
+      "var_name": "host_Rcv_Lift_Position",
+      "name_cn": "提升实际位置",
+      "data_type": "REAL",
+      "d_addr": 28,
+      "comment": "REAL占2地址(28-29)"
+    },
+    {
+      "var_name": "host_Rcv_Center_Position",
+      "name_cn": "对中实际位置",
+      "data_type": "REAL",
+      "d_addr": 30,
+      "comment": "REAL占2地址(30-31)"
+    },
+    {
+      "var_name": "host_Rcv_Cross_MoveDone",
+      "name_cn": "横移定位完成",
+      "data_type": "INT",
+      "d_addr": 32,
+      "comment": "=1到位,启动信号清零后复位"
+    },
+    {
+      "var_name": "host_Rcv_Rot_MoveDone",
+      "name_cn": "旋转定位完成",
+      "data_type": "INT",
+      "d_addr": 33,
+      "comment": "=1到位"
+    },
+    {
+      "var_name": "host_Rcv_Lift_MoveDone",
+      "name_cn": "提升定位完成",
+      "data_type": "INT",
+      "d_addr": 34,
+      "comment": "=1到位"
+    },
+    {
+      "var_name": "host_Rcv_Center_MoveDone",
+      "name_cn": "对中定位完成",
+      "data_type": "INT",
+      "d_addr": 35,
+      "comment": "=1到位"
+    },
+    {
+      "var_name": "host_Rcv_Roller_Material",
+      "name_cn": "辊筒物料检测",
+      "data_type": "INT",
+      "d_addr": 36,
+      "comment": "有料1/无料0"
+    },
+    {
+      "var_name": "host_Rcv_Grip_LimitPos",
+      "name_cn": "夹爪正限位",
+      "data_type": "INT",
+      "d_addr": 37,
+      "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_Grip_LimitNeg",
+      "name_cn": "夹爪负限位",
+      "data_type": "INT",
+      "d_addr": 38,
+      "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_LBlock_LimitPos",
+      "name_cn": "左阻挡正限位",
+      "data_type": "INT",
+      "d_addr": 39,
+      "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_LBlock_LimitNeg",
+      "name_cn": "左阻挡负限位",
+      "data_type": "INT",
+      "d_addr": 40,
+      "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_RBlock_LimitPos",
+      "name_cn": "右阻挡正限位",
+      "data_type": "INT",
+      "d_addr": 41,
+      "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_RBlock_LimitNeg",
+      "name_cn": "右阻挡负限位",
+      "data_type": "INT",
+      "d_addr": 42,
+      "comment": "触发1"
+    },
+    {
+      "var_name": "host_Rcv_Cross_CmdState",
+      "name_cn": "横移命令回执",
+      "data_type": "INT",
+      "d_addr": 44,
+      "comment": "命令回执:0空闲/2执行中/3完成/4超时(保持至下条命令)"
+    },
+    {
+      "var_name": "host_Rcv_Rot_CmdState",
+      "name_cn": "旋转命令回执",
+      "data_type": "INT",
+      "d_addr": 45,
+      "comment": "命令回执:0空闲/2执行中/3完成/4超时(保持至下条命令)"
+    },
+    {
+      "var_name": "host_Rcv_Lift_CmdState",
+      "name_cn": "提升命令回执",
+      "data_type": "INT",
+      "d_addr": 46,
+      "comment": "命令回执:0空闲/2执行中/3完成/4超时(保持至下条命令)"
+    },
+    {
+      "var_name": "host_Rcv_Center_CmdState",
+      "name_cn": "对中命令回执",
+      "data_type": "INT",
+      "d_addr": 47,
+      "comment": "命令回执:0空闲/2执行中/3完成/4超时(保持至下条命令)"
+    }
   ],
   "io": [
-    {"var_name": "in_EStop", "data_type": "BOOL", "address": "X0", "filter_mode": "none", "comment": "急停输入(常闭,FALSE=触发,不滤波)"},
-    {"var_name": "in_SafetyGate", "data_type": "BOOL", "address": "X1", "filter_mode": "builtin", "comment": "安全门(常闭)"},
-    {"var_name": "in_GripperMotor_Err", "data_type": "BOOL", "address": "X10", "filter_mode": "builtin", "comment": "夹爪步进故障"},
-    {"var_name": "in_LeftBlock_Err", "data_type": "BOOL", "address": "X11", "filter_mode": "builtin", "comment": "左阻挡步进故障"},
-    {"var_name": "in_RightBlock_Err", "data_type": "BOOL", "address": "X12", "filter_mode": "builtin", "comment": "右阻挡步进故障"},
-    {"var_name": "in_Roller_Err", "data_type": "BOOL", "address": "X13", "filter_mode": "builtin", "comment": "辊筒控制卡故障"},
-    {"var_name": "in_Grip_LimitPos", "data_type": "BOOL", "address": "X20", "filter_mode": "builtin", "comment": "夹爪正向限位(常闭)"},
-    {"var_name": "in_Grip_LimitNeg", "data_type": "BOOL", "address": "X21", "filter_mode": "builtin", "comment": "夹爪反向限位(常闭)"},
-    {"var_name": "in_LBlock_LimitPos", "data_type": "BOOL", "address": "X22", "filter_mode": "builtin", "comment": "左阻挡正向限位(常闭)"},
-    {"var_name": "in_LBlock_LimitNeg", "data_type": "BOOL", "address": "X23", "filter_mode": "builtin", "comment": "左阻挡反向限位(常闭)"},
-    {"var_name": "in_RBlock_LimitPos", "data_type": "BOOL", "address": "X24", "filter_mode": "builtin", "comment": "右阻挡正向限位(常闭)"},
-    {"var_name": "in_RBlock_LimitNeg", "data_type": "BOOL", "address": "X25", "filter_mode": "builtin", "comment": "右阻挡反向限位(常闭)"},
-    {"var_name": "in_Roller_Material", "data_type": "BOOL", "address": "X26", "filter_mode": "builtin", "comment": "辊筒物料检测"},
-    {"var_name": "in_Auto", "data_type": "BOOL", "address": "X14", "filter_mode": "builtin", "comment": "模式选择-自动位(物理开关)"},
-    {"var_name": "in_Manual", "data_type": "BOOL", "address": "X15", "filter_mode": "builtin", "comment": "模式选择-手动位(物理开关)"},
-    {"var_name": "out_Light_Red", "data_type": "BOOL", "address": "Y0", "comment": "红灯(报警)"},
-    {"var_name": "out_Light_Green", "data_type": "BOOL", "address": "Y1", "comment": "绿灯(自动)"},
-    {"var_name": "out_Light_Yellow", "data_type": "BOOL", "address": "Y2", "comment": "黄灯(手动)"},
-    {"var_name": "out_Buzz", "data_type": "BOOL", "address": "Y3", "comment": "蜂鸣器"},
-    {"var_name": "out_Gripper_Reset", "data_type": "BOOL", "address": "Y10", "comment": "夹爪复位"},
-    {"var_name": "out_Gripper_Stop", "data_type": "BOOL", "address": "Y11", "comment": "夹爪停止"},
-    {"var_name": "out_Gripper_Path1", "data_type": "BOOL", "address": "Y12", "comment": "夹爪路径1(夹紧)"},
-    {"var_name": "out_Gripper_Path2", "data_type": "BOOL", "address": "Y13", "comment": "夹爪路径2(松开)"},
-    {"var_name": "out_LBlock_Reset", "data_type": "BOOL", "address": "Y14", "comment": "左阻挡复位"},
-    {"var_name": "out_LBlock_Stop", "data_type": "BOOL", "address": "Y15", "comment": "左阻挡停止"},
-    {"var_name": "out_LBlock_Path1", "data_type": "BOOL", "address": "Y16", "comment": "左阻挡路径1(上升)"},
-    {"var_name": "out_LBlock_Path2", "data_type": "BOOL", "address": "Y17", "comment": "左阻挡路径2(下降)"},
-    {"var_name": "out_RBlock_Reset", "data_type": "BOOL", "address": "Y20", "comment": "右阻挡复位"},
-    {"var_name": "out_RBlock_Stop", "data_type": "BOOL", "address": "Y21", "comment": "右阻挡停止"},
-    {"var_name": "out_RBlock_Path1", "data_type": "BOOL", "address": "Y22", "comment": "右阻挡路径1(上升)"},
-    {"var_name": "out_RBlock_Path2", "data_type": "BOOL", "address": "Y23", "comment": "右阻挡路径2(下降)"},
-    {"var_name": "out_CC_Run", "data_type": "BOOL", "address": "Y30", "comment": "控制卡运行使能"},
-    {"var_name": "out_CC_Dir", "data_type": "BOOL", "address": "Y31", "comment": "控制卡方向"},
-    {"var_name": "out_CC_SpeedA", "data_type": "BOOL", "address": "Y32", "comment": "控制卡速度档A"},
-    {"var_name": "out_CC_SpeedB", "data_type": "BOOL", "address": "Y33", "comment": "控制卡速度档B"},
-    {"var_name": "out_EStop_Reset", "data_type": "BOOL", "address": "Y40", "comment": "急停继电器复位"}
+    {
+      "var_name": "in_EStop",
+      "data_type": "BOOL",
+      "address": "X0",
+      "filter_mode": "none",
+      "comment": "急停输入(常闭,FALSE=触发,不滤波)"
+    },
+    {
+      "var_name": "in_SafetyGate",
+      "data_type": "BOOL",
+      "address": "X1",
+      "filter_mode": "builtin",
+      "comment": "安全门(常闭)"
+    },
+    {
+      "var_name": "in_GripperMotor_Err",
+      "data_type": "BOOL",
+      "address": "X10",
+      "filter_mode": "builtin",
+      "comment": "夹爪步进故障"
+    },
+    {
+      "var_name": "in_LeftBlock_Err",
+      "data_type": "BOOL",
+      "address": "X11",
+      "filter_mode": "builtin",
+      "comment": "左阻挡步进故障"
+    },
+    {
+      "var_name": "in_RightBlock_Err",
+      "data_type": "BOOL",
+      "address": "X12",
+      "filter_mode": "builtin",
+      "comment": "右阻挡步进故障"
+    },
+    {
+      "var_name": "in_Roller_Err",
+      "data_type": "BOOL",
+      "address": "X13",
+      "filter_mode": "builtin",
+      "comment": "辊筒控制卡故障"
+    },
+    {
+      "var_name": "in_Grip_LimitPos",
+      "data_type": "BOOL",
+      "address": "X20",
+      "filter_mode": "builtin",
+      "comment": "夹爪正向限位(常闭)"
+    },
+    {
+      "var_name": "in_Grip_LimitNeg",
+      "data_type": "BOOL",
+      "address": "X21",
+      "filter_mode": "builtin",
+      "comment": "夹爪反向限位(常闭)"
+    },
+    {
+      "var_name": "in_LBlock_LimitPos",
+      "data_type": "BOOL",
+      "address": "X22",
+      "filter_mode": "builtin",
+      "comment": "左阻挡正向限位(常闭)"
+    },
+    {
+      "var_name": "in_LBlock_LimitNeg",
+      "data_type": "BOOL",
+      "address": "X23",
+      "filter_mode": "builtin",
+      "comment": "左阻挡反向限位(常闭)"
+    },
+    {
+      "var_name": "in_RBlock_LimitPos",
+      "data_type": "BOOL",
+      "address": "X24",
+      "filter_mode": "builtin",
+      "comment": "右阻挡正向限位(常闭)"
+    },
+    {
+      "var_name": "in_RBlock_LimitNeg",
+      "data_type": "BOOL",
+      "address": "X25",
+      "filter_mode": "builtin",
+      "comment": "右阻挡反向限位(常闭)"
+    },
+    {
+      "var_name": "in_Roller_Material",
+      "data_type": "BOOL",
+      "address": "X26",
+      "filter_mode": "builtin",
+      "comment": "辊筒物料检测"
+    },
+    {
+      "var_name": "in_Auto",
+      "data_type": "BOOL",
+      "address": "X14",
+      "filter_mode": "builtin",
+      "comment": "模式选择-自动位(物理开关)"
+    },
+    {
+      "var_name": "in_Manual",
+      "data_type": "BOOL",
+      "address": "X15",
+      "filter_mode": "builtin",
+      "comment": "模式选择-手动位(物理开关)"
+    },
+    {
+      "var_name": "out_Light_Red",
+      "data_type": "BOOL",
+      "address": "Y0",
+      "comment": "红灯(报警)"
+    },
+    {
+      "var_name": "out_Light_Green",
+      "data_type": "BOOL",
+      "address": "Y1",
+      "comment": "绿灯(自动)"
+    },
+    {
+      "var_name": "out_Light_Yellow",
+      "data_type": "BOOL",
+      "address": "Y2",
+      "comment": "黄灯(手动)"
+    },
+    {
+      "var_name": "out_Buzz",
+      "data_type": "BOOL",
+      "address": "Y3",
+      "comment": "蜂鸣器"
+    },
+    {
+      "var_name": "out_Gripper_Reset",
+      "data_type": "BOOL",
+      "address": "Y10",
+      "comment": "夹爪复位"
+    },
+    {
+      "var_name": "out_Gripper_Stop",
+      "data_type": "BOOL",
+      "address": "Y11",
+      "comment": "夹爪停止"
+    },
+    {
+      "var_name": "out_Gripper_Path1",
+      "data_type": "BOOL",
+      "address": "Y12",
+      "comment": "夹爪路径1(夹紧)"
+    },
+    {
+      "var_name": "out_Gripper_Path2",
+      "data_type": "BOOL",
+      "address": "Y13",
+      "comment": "夹爪路径2(松开)"
+    },
+    {
+      "var_name": "out_LBlock_Reset",
+      "data_type": "BOOL",
+      "address": "Y14",
+      "comment": "左阻挡复位"
+    },
+    {
+      "var_name": "out_LBlock_Stop",
+      "data_type": "BOOL",
+      "address": "Y15",
+      "comment": "左阻挡停止"
+    },
+    {
+      "var_name": "out_LBlock_Path1",
+      "data_type": "BOOL",
+      "address": "Y16",
+      "comment": "左阻挡路径1(上升)"
+    },
+    {
+      "var_name": "out_LBlock_Path2",
+      "data_type": "BOOL",
+      "address": "Y17",
+      "comment": "左阻挡路径2(下降)"
+    },
+    {
+      "var_name": "out_RBlock_Reset",
+      "data_type": "BOOL",
+      "address": "Y20",
+      "comment": "右阻挡复位"
+    },
+    {
+      "var_name": "out_RBlock_Stop",
+      "data_type": "BOOL",
+      "address": "Y21",
+      "comment": "右阻挡停止"
+    },
+    {
+      "var_name": "out_RBlock_Path1",
+      "data_type": "BOOL",
+      "address": "Y22",
+      "comment": "右阻挡路径1(上升)"
+    },
+    {
+      "var_name": "out_RBlock_Path2",
+      "data_type": "BOOL",
+      "address": "Y23",
+      "comment": "右阻挡路径2(下降)"
+    },
+    {
+      "var_name": "out_CC_Run",
+      "data_type": "BOOL",
+      "address": "Y30",
+      "comment": "控制卡运行使能"
+    },
+    {
+      "var_name": "out_CC_Dir",
+      "data_type": "BOOL",
+      "address": "Y31",
+      "comment": "控制卡方向"
+    },
+    {
+      "var_name": "out_CC_SpeedA",
+      "data_type": "BOOL",
+      "address": "Y32",
+      "comment": "控制卡速度档A"
+    },
+    {
+      "var_name": "out_CC_SpeedB",
+      "data_type": "BOOL",
+      "address": "Y33",
+      "comment": "控制卡速度档B"
+    },
+    {
+      "var_name": "out_EStop_Reset",
+      "data_type": "BOOL",
+      "address": "Y40",
+      "comment": "急停继电器复位"
+    }
   ],
   "position_tables": {
-    "1": [0.0, 100.0, 200.0, 300.0, 400.0],
-    "2": [0.0, 90.0, 180.0, 270.0, 360.0],
-    "3": [0.0, 150.0, 300.0, 450.0, 600.0],
-    "4": [0.0, 50.0, 100.0, 150.0, 200.0]
+    "1": [
+      0.0,
+      100.0,
+      200.0,
+      300.0,
+      400.0
+    ],
+    "2": [
+      0.0,
+      90.0,
+      180.0,
+      270.0,
+      360.0
+    ],
+    "3": [
+      0.0,
+      150.0,
+      300.0,
+      450.0,
+      600.0
+    ],
+    "4": [
+      0.0,
+      50.0,
+      100.0,
+      150.0,
+      200.0
+    ]
   },
   "constants": [
-    {"name": "FILTER_TIME_MATERIAL", "data_type": "DINT", "value": "20", "comment": "物料检测滤波时间(ms)"},
-    {"name": "FILTER_TIME_LIMIT", "data_type": "DINT", "value": "20", "comment": "限位滤波时间(ms)"},
-    {"name": "TIMEOUT_AXIS_MOVE", "data_type": "DINT", "value": "5000", "comment": "定位超时(ms)"},
-    {"name": "TIMEOUT_CMD_HANDSHAKE", "data_type": "DINT", "value": "5000", "comment": "命令握手超时(ms)"},
-    {"name": "WATCHDOG_TIMEOUT", "data_type": "DINT", "value": "3000", "comment": "通讯看门狗超时(ms)"},
-    {"name": "AXIS_JOG_VELOCITY", "data_type": "REAL", "value": "10.0", "comment": "点动速度"},
-    {"name": "AXIS_JOG_ACC", "data_type": "REAL", "value": "50.0", "comment": "点动加速度"},
-    {"name": "AXIS_JOG_DEC", "data_type": "REAL", "value": "50.0", "comment": "点动减速度"},
-    {"name": "ERRID_ESTOP", "data_type": "DINT", "value": "16#00000001", "comment": "急停故障位"},
-    {"name": "ERRID_COMM", "data_type": "DINT", "value": "16#00000020", "comment": "通讯故障位"},
-    {"name": "ERRID_TIMEOUT", "data_type": "DINT", "value": "16#00000040", "comment": "超时故障位"}
+    {
+      "name": "FILTER_TIME_MATERIAL",
+      "data_type": "DINT",
+      "value": "20",
+      "comment": "物料检测滤波时间(ms)"
+    },
+    {
+      "name": "FILTER_TIME_LIMIT",
+      "data_type": "DINT",
+      "value": "20",
+      "comment": "限位滤波时间(ms)"
+    },
+    {
+      "name": "TIMEOUT_AXIS_MOVE",
+      "data_type": "DINT",
+      "value": "5000",
+      "comment": "定位超时(ms, 纯设备有线域, 不含网络)"
+    },
+    {
+      "name": "TIMEOUT_CMD_HANDSHAKE",
+      "data_type": "DINT",
+      "value": "15000",
+      "comment": "命令握手超时(ms, 含无线上行网络段, 须≥2×TIMEOUT_AXIS_MOVE)"
+    },
+    {
+      "name": "WATCHDOG_DEGRADED",
+      "data_type": "DINT",
+      "value": "1000",
+      "comment": "通讯降级阈值(ms, 冻结新命令动作继续)"
+    },
+    {
+      "name": "HEART_PERIOD",
+      "data_type": "DINT",
+      "value": "1000",
+      "comment": "出向心跳周期(ms)"
+    },
+    {
+      "name": "WATCHDOG_TIMEOUT",
+      "data_type": "DINT",
+      "value": "3000",
+      "comment": "通讯失联阈值(ms, 超时安全停)"
+    },
+    {
+      "name": "AXIS_JOG_VELOCITY",
+      "data_type": "REAL",
+      "value": "10.0",
+      "comment": "点动速度"
+    },
+    {
+      "name": "AXIS_JOG_ACC",
+      "data_type": "REAL",
+      "value": "50.0",
+      "comment": "点动加速度"
+    },
+    {
+      "name": "AXIS_JOG_DEC",
+      "data_type": "REAL",
+      "value": "50.0",
+      "comment": "点动减速度"
+    },
+    {
+      "name": "ERRID_ESTOP",
+      "data_type": "DINT",
+      "value": "16#00000001",
+      "comment": "急停故障位"
+    },
+    {
+      "name": "ERRID_COMM",
+      "data_type": "DINT",
+      "value": "16#00000020",
+      "comment": "通讯故障位"
+    },
+    {
+      "name": "ERRID_TIMEOUT",
+      "data_type": "DINT",
+      "value": "16#00000040",
+      "comment": "超时故障位"
+    },
+    {
+      "name": "CMDST_IDLE",
+      "data_type": "INT",
+      "value": "0",
+      "comment": "命令回执: 空闲"
+    },
+    {
+      "name": "CMDST_EXEC",
+      "data_type": "INT",
+      "value": "2",
+      "comment": "命令回执: 执行中(已锁存)"
+    },
+    {
+      "name": "CMDST_DONE",
+      "data_type": "INT",
+      "value": "3",
+      "comment": "命令回执: 定位完成"
+    },
+    {
+      "name": "CMDST_EXPIRED",
+      "data_type": "INT",
+      "value": "4",
+      "comment": "命令回执: 超时(保持至下条命令)"
+    }
   ]
 }

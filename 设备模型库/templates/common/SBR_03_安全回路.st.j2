@@ -16,9 +16,24 @@ ELSE
 END_IF;
 con_ErrorBit := con_ErrorID <> 0;
 
-(* 通讯看门狗: con_CommLost 由 SBR_host 检测置位 (此处仅消费联锁) *)
+(* ── 通讯看门狗 (细则9): 出向自增 + 入向三级降级 (无线上位机链路适应) ── *)
+(* 出向心跳: 独立寄存器周期自增示存活, 禁止回显入向 (否则看门狗失效) *)
+TONR(IN := TRUE, PT := HEART_PERIOD, R := con_HeartRst, Q => con_HeartQ);
+IF con_HeartQ THEN
+    con_Heart_Counter := con_Heart_Counter + 1;
+END_IF;
+con_HeartRst := con_HeartQ;
+host_Send_Heart := con_Heart_Counter;
+(* 入向看门狗: 心跳变化判在线。
+   降级(WATCHDOG_DEGRADED): 冻结新命令受理, 已锁存动作继续完成 (容忍无线漫游/抖动);
+   失联(WATCHDOG_TIMEOUT): con_CommLost -> RunOK=0 -> 显式安全切断 *)
+TONR(IN := host_Rcv_Heart = con_Heart_Prev, PT := WATCHDOG_DEGRADED,
+    R := host_Rcv_Heart <> con_Heart_Prev, Q => con_CommDegraded);
+TONR(IN := host_Rcv_Heart = con_Heart_Prev, PT := WATCHDOG_TIMEOUT,
+    R := host_Rcv_Heart <> con_Heart_Prev, Q => con_CommLost);
+con_Heart_Prev := host_Rcv_Heart;
 
-(* 运行许可: 急停OK 且 无故障 且 通讯正常 *)
+(* 运行许可: 急停OK 且 无故障 且 通讯正常 (降级不杀许可, 仅冻结新命令) *)
 con_RunOK := in_EStop AND NOT con_ErrorBit AND NOT con_CommLost;
 
 (* 三色灯 FB_TowerLight *)

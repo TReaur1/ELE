@@ -2,6 +2,16 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v1.8.0 — 2026-09-04
+
+- **无线上位机链路延迟适应范例（待用户评测）：无线段容忍不确定 + 有线段利用确定**：
+  - **超时分层**：`TIMEOUT_CMD_HANDSHAKE` 5000→15000ms（含无线上行网络段，注释标明须≥2×轴超时）；`TIMEOUT_AXIS_MOVE` 注释标明"纯设备有线域，不含网络"——命令路径与执行路径的超时预算分开。
+  - **命令防重放**：通讯表新增 `host_Send_CmdSeq` 序号寄存器，PLC 记忆 `con_LastCmdSeq`，同序号重发不二次触发（无线网络重发/乱序防护）；host_driven 在 SBR_06 握手 Cmd 门控，internal_seq 在 SBR_04 对 Start/Home 门控；**停止命令永不拦截**。
+  - **命令回执状态字**：host_driven 每轴新增 `host_Rcv_*_CmdState`（CMDST_ 常量 0空闲/2执行中/3完成/4超时，超时保持至下条命令），上位机收到回执前不得认为命令已生效。
+  - **看门狗三级降级**：SBR_03 实装出向心跳（`HEART_PERIOD` 周期 TONR 翻转自增，**修正原模板"回显入向"违反细则9**）+ 入向双阈值看门狗——`WATCHDOG_DEGRADED`(1000ms) 降级：冻结新命令受理、已锁存动作继续完成（容忍无线漫游/抖动）；`WATCHDOG_TIMEOUT`(3000ms) 失联：con_CommLost→RunOK=0→显式安全切断。
+  - **配套**：三份 spec 统一 13→17 常量（新增 WATCHDOG_DEGRADED/HEART_PERIOD/CMDST_*）；demo_seq 补齐入/出向心跳寄存器；con 表新增 con_Heart_Prev/con_CommDegraded/con_LastCmdSeq/con_HeartQ/con_HeartRst(D2022~26)。
+  - **验证**：三工程 generate.py 全过、verify_counts/consistency OK、ci_check 错误 0。
+
 ## v1.7.0 — 2026-09-04
 
 - **定位指令超时判定全面实施（worklog 任务#11 修复建议①~④落地，ZCode 编排器执行）**：

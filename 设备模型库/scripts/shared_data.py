@@ -221,6 +221,11 @@ CON_VARS = [
     ('con_Scan_Step', 'INT', 'D2019', '扫描步标记'),
     ('con_TimeoutReq', 'BOOL', 'D2020', '超时检测源(SBR_06置位, SBR_03锁存)'),
     ('con_AlarmReset', 'BOOL', 'D2021', '报警复位命令(上升沿, 接本地/HMI复位)'),
+    ('con_Heart_Prev', 'INT', 'D2022', '入向心跳上周期值(变化判在线)'),
+    ('con_CommDegraded', 'BOOL', 'D2023', '通讯降级(冻结新命令,已锁存动作继续完成)'),
+    ('con_LastCmdSeq', 'INT', 'D2024', '上次受理命令序号(防无线重放)'),
+    ('con_HeartQ', 'BOOL', 'D2025', '出向心跳周期到标志(TONR直调Q)'),
+    ('con_HeartRst', 'BOOL', 'D2026', '出向心跳定时器复位脉冲'),
 ]
 
 # 按原型追加的变量 (自动生成, 不进 JSON 规格单)

@@ -195,6 +195,13 @@
       "data_type": "INT",
       "d_addr": 16,
       "comment": "上位机→PLC,每秒+1,PLC检测变化判在线"
+    },
+    {
+      "var_name": "host_Send_CmdSeq",
+      "name_cn": "命令序号",
+      "data_type": "INT",
+      "d_addr": 43,
+      "comment": "每次新命令+1,PLC比对序号防无线重放"
     }
   ],
   "comm_read": [
@@ -633,19 +640,19 @@
       "name": "TIMEOUT_AXIS_MOVE",
       "data_type": "DINT",
       "value": "5000",
-      "comment": "定位超时(ms)"
+      "comment": "定位超时(ms, 纯设备有线域, 不含网络)"
     },
     {
       "name": "TIMEOUT_CMD_HANDSHAKE",
       "data_type": "DINT",
-      "value": "5000",
-      "comment": "命令握手超时(ms)"
+      "value": "15000",
+      "comment": "命令握手超时(ms, 含无线上行网络段, 须≥2×TIMEOUT_AXIS_MOVE)"
     },
     {
       "name": "WATCHDOG_TIMEOUT",
       "data_type": "DINT",
       "value": "3000",
-      "comment": "通讯看门狗超时(ms)"
+      "comment": "通讯失联阈值(ms, 超时安全停)"
     },
     {
       "name": "AXIS_JOG_VELOCITY",
@@ -682,6 +689,18 @@
       "data_type": "DINT",
       "value": "16#00000040",
       "comment": "超时故障位"
+    },
+    {
+      "name": "WATCHDOG_DEGRADED",
+      "data_type": "DINT",
+      "value": "1000",
+      "comment": "通讯降级阈值(ms, 冻结新命令动作继续)"
+    },
+    {
+      "name": "HEART_PERIOD",
+      "data_type": "DINT",
+      "value": "1000",
+      "comment": "出向心跳周期(ms)"
     }
   ]
 }
