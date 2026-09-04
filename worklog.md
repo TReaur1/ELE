@@ -49,3 +49,11 @@
   5. demo_seq.json 补齐 6 个缺失常量(与 virtual/seq 对齐); 新增 con 变量 con_TimeoutReq(D2020)/con_AlarmReset(D2021)/con_TimeoutQ(internal_seq 原型扩展, 地址顺延)。
 - **结论**: 三工程 generate.py 全过(review_st 无硬伤), verify_counts/verify_consistency OK, ci_check 错误 0; 表↔代码符号一致性由生成器保证。
 - **遗留**: con_AlarmReset 复位源需接本地/HMI 复位按钮; con_CommLost 看门狗检测在 SBR_host 仍待实施(本次范围外)。
+
+
+## 2026-09-04 v1.8.0 评测通过: 无线适应四机制固化 (复盘闭环)
+
+- **触发**: 用户评测 v1.8.0 范例, 逐项认可四机制思想, 指示写入整个工程。
+- **落盘**: AGENTS.md 第五节新增细则 15~18 (无线命令防重放/命令回执状态字/超时分层/无线看门狗三级降级); 汇川PLC_ST编程知识.md 细则同步扩为 18 条。
+- **执行侧已实现**: 设备模型库生成器 (v1.8.0 提交 31121d4) —— spec 常量/通讯寄存器 + SBR_03/SBR_06/SBR_04 模板, 三工程产物已带全部机制。
+- **细则15 补充要求 (待实施)**: 通讯恢复时 con_LastCmdSeq 清零, 防 host 重启序号回绕死锁 —— 生成器模板尚未含此句, 下次生成器迭代补。
