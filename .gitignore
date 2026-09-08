@@ -31,3 +31,9 @@ collab/err.txt
 collab/out.txt
 collab/inbox*.md
 collab/test_inbox.md
+
+# teamai 派生种子目录 (pull 自动重建, 不入库)
+.codex/skills/
+.codex/rules/
+.dsh/
+.opencode/

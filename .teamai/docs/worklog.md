@@ -102,15 +102,3 @@
      const 表 ALMIDX_* 4行; 报警对照表.csv(急停/气缸超时/断讯/降级); 00_说明 加"三点五 HMI组态指引"。
 - **自查**: 修正一处笔误(bit0 掩码误写 2#0001_0 → 2#0001); ci_check 0 错误; golden ALL PASS。
 - **HMI 侧待办(组态)**: 文本列表控件绑定 con_AlarmIndex, 按 对照表 行录入汉字; 报警控件按位映射。
-
-
-## 2026-09-08 teamai-cli 落地 (单仓模式, 团队知识分发)
-
-- **落地**: npm 装 teamai-cli 0.22.0; ELE 仓 `teamai init . --self --agent codex,opencode,dsh` 单仓模式;
-  知识进 main `.teamai/`, 报告进 teamai-reports orphan 分支; codex hooks + opencode plugin 自动注入。
-- **知识导入**: rules(AGENTS/CONTRIBUTING), docs(编程知识/worklog/README), skills(git-collab),
-  learnings(定位超时/TONR自翻转/注释闭合/github抖动 4条复盘提炼)。
-- **凭据**: gh CLI 经 winget 安装; OAuth 设备码两次被直连超时打断, 改 PAT(repo+admin:org_hook)经 GITHUB_TOKEN 路线
-  (teamai 接受 repo 权限, gh 的 read:org 强校验被绕过), 已 setx 固化。
-- **验证**: doctor 全过; pull 同步 1 skill/2 rules/3 docs/4 learnings; ZCode 约定会话先 pull 读 .teamai。
-- **已知警告**: 单仓自模式 pull 时 docs 自拷贝告警(无害); codex 需在 /hooks 中 trust 后 hook 生效。

@@ -2,6 +2,15 @@
 
 > 每次精进 = 1 个条目 + 1 次 git 提交。格式：`[版本] 日期 — 变更摘要`。
 
+## v2.2.0 — 2026-09-08
+
+- **接入 Tencent teamai-cli（团队知识分发, 单仓模式）**：
+  - `teamai init . --self --agent codex,opencode,dsh`：知识进 main `.teamai/`（rules/docs/skills/learnings），报告进 teamai-reports orphan 分支，clone 即初始化；codex hooks 与 OpenCode plugin 自动注入。
+  - 存量知识资产化导入 + 4 条 learnings 复盘提炼（定位超时/TONR 自翻转/注释闭合陷阱/github 直连抖动）。
+  - ZCode 接入约定写入 git-collab 契约第六节（无自动 hook，会话先 git pull 读 .teamai）。
+  - 凭据：winget 装 gh CLI；直连 OAuth 两次超时后改 PAT + GITHUB_TOKEN 路线（setx 固化）。
+  - 验证：doctor 全过，pull 同步 1 skill/2 rules/3 docs/4 learnings。
+
 ## v2.1.0 — 2026-09-04
 
 - **报警汉字显示优化（索引字+对照表，用户选定路线B，生成器+辊筒模板双体系）**：

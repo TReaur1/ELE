@@ -99,17 +99,6 @@ metadata:
 
 ---
 
-## 六、teamai 知识分发（v2.2.0 起）
-
-本仓已启用 [teamai-cli](https://github.com/Tencent/teamai-cli) 单仓模式，`.teamai/` 即团队知识库：
-
-- **知识在 main 分支 `.teamai/`**：rules(AGENTS/CONTRIBUTING)、docs(编程知识/worklog)、skills(git-collab)、learnings(复盘结论)，clone 即带全套。
-- **接入方式**：`npm i -g teamai-cli` 后在仓内 `teamai pull`（codex/opencode/dsh 自动注入；SessionStart 自动同步）。**ZCode 约定：每次会话先 `git pull` 并读 `.teamai/` 最新内容**（无自动 hook）。
-- **沉淀路径**：经验写 `.teamai/learnings/`，规则变更走 PR 审查后合并 main，各成员 `teamai pull` 自动生效。
-- 状态体检：`teamai doctor`。
-
----
-
 ## 六、实时协作（collab-relay，可选增强）
 
 仓库内置同机实时协作中心 `collab/`（消息/状态/任务/git 代理四通道，纯标准库）：
