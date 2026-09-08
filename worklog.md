@@ -114,3 +114,9 @@
   (teamai 接受 repo 权限, gh 的 read:org 强校验被绕过), 已 setx 固化。
 - **验证**: doctor 全过; pull 同步 1 skill/2 rules/3 docs/4 learnings; ZCode 约定会话先 pull 读 .teamai。
 - **已知警告**: 单仓自模式 pull 时 docs 自拷贝告警(无害); codex 需在 /hooks 中 trust 后 hook 生效。
+
+
+## 2026-09-08 NetSetMan 自动化实测 (ETW600 流程收尾)
+
+- 确认框关闭(Confirmation=False)后 CLI 切换完全无人值守: 配置2(DHCP)<->ETW600 双向实测通过
+- 沉淀 learning: netsetman-cli自动化要点(CLI语法/确认框卡点/配置直改/127环回限制/双IP技巧/UIPI边界)
